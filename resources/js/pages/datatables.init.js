@@ -1,4 +1,3 @@
-
 /*
 Template Name: Shreyu - Responsive Bootstrap 4 Admin Dashboard
 Author: CoderThemes
@@ -9,7 +8,7 @@ File: Data tables init js
 */
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     // Default Datatable
     $('#basic-datatable').DataTable({
@@ -70,6 +69,5 @@ $(document).ready(function() {
     });
 
     table.buttons().container()
-            .appendTo('#datatable-buttons_wrapper .col-md-6:eq(0)');
-} );
-    
+        .appendTo('#datatable-buttons_wrapper .col-md-6:eq(0)');
+});

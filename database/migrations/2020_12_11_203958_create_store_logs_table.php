@@ -16,8 +16,9 @@ class CreateStoreLogsTable extends Migration
         Schema::create('store_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('storeID');
-            $table->unsignedInteger('userID');
+            $table->unsignedInteger('userID')->nullable();
             $table->text('desc');
+            $table->text('detail');
             $table->timestamps();
         });
     }

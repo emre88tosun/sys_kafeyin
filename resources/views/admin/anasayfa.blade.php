@@ -43,7 +43,7 @@
 
                 </div>
             </div>
-            <div class="btn-group ml-2">
+            <div class="btn-group ml-2 mt-xs-2">
                 <button type="button"
                         class="btn btn-primary btn-sm dropdown-toggle"
                         data-toggle="dropdown"
@@ -60,7 +60,6 @@
 
                 </div>
             </div>
-
             <div class="btn-group ml-2">
                 <button type="button"
                         class="btn btn-primary btn-sm dropdown-toggle"
@@ -75,6 +74,8 @@
                     <a href="javascript:void(0);" type="button" class="dropdown-item sa-serverDown">Sunucuyu kapat</a>
                 </div>
             </div>
+            <a class="btn btn-sm btn-primary ml-2" type="button" href="/adminpanel/ownershipapplicationreferrals">OwnershipApplicationReferrals</a>
+            <a class="btn btn-sm btn-primary ml-2" type="button" href="/adminpanel/preregisteredstoreusers">PreRegisteredStoreUsers</a>
         </div>
     </div>
     <div class="row mt-2">

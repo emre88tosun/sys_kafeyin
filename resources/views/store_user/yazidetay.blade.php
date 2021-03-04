@@ -76,7 +76,7 @@
             </div>
 
             <div class="slimscroll">
-                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/yaziguncelle">
+                <form id="frmYazDuzenle" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/yaziguncelle">
                     @csrf
                     <fieldset>
                         <input type="hidden" name="artID" value="YAZ{{$yazi->id}}">
@@ -128,8 +128,8 @@
                                 @endif
                             @endif
                         @endif
-                        <div class="offset-md-0">
-                            <input type="submit" class="btn btn-primary ml-3 mb-5" value="Güncelle">
+                        <div class="col-12">
+                            <input type="submit" class="btn btn-primary mb-5" value="Güncelle">
                         </div>
                     </fieldset>
                 </form>
@@ -145,6 +145,17 @@
     <script src="{{ URL::asset('assets/js/pages/sweet-alerts.init.js')}}"></script>
     <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
     <script src="{{ URL::asset('assets/plugins/dropify/js/dropify.min.js') }}"></script>
+    <script type="text/javascript">
+        $('#frmYazDuzenle').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+    </script>
     <script>
         @if($errors->any())
             swal.fire({

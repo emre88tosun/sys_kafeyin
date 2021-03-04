@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserLogsTable extends Migration
+class CreateSupportTicketsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CreateUserLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_logs', function (Blueprint $table) {
+        Schema::create('support_tickets', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('userID');
-            $table->text('desc');
-            $table->text('detail');
+            $table->string('topic');
+            $table->text('userMessage');
+            $table->text('adminMessage')->nullable();
+            $table->boolean('isAnswered')->default(0);
+            $table->boolean('isAnswerSeen')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ class CreateUserLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_logs');
+        Schema::dropIfExists('support_tickets');
     }
 }

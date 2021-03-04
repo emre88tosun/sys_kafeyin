@@ -10,6 +10,7 @@ class StoreLog extends Model
         'storeID',
         'userID',
         'desc',
+        'detail',
     ];
 
     public function user()

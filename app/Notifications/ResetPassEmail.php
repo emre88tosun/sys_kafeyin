@@ -66,7 +66,7 @@ class ResetPassEmail extends Notification
     protected function buildMailMessage($url, $notifiable)
     {
         return (new MailMessage)
-            ->subject("Şifre Yenileme Bağlantısı")
+            ->subject("Şifre yenileme bağlantısı")
             ->greeting('Merhaba, '.$notifiable->name.' '.$notifiable->surname.'!')
             ->line("Şifre yenileme bağlantısı talebiniz üzerine bu e-postayı size gönderdik.")
             ->action("Şifremi Yenile", $url)

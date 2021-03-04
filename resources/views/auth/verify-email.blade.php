@@ -16,16 +16,16 @@
                                     </div>
                                     <h6 class="h5 mb-0 mt-4 mb-3">Merhaba, {{\Illuminate\Support\Facades\Auth::user()->name}} {{\Illuminate\Support\Facades\Auth::user()->surname}}!</h6>
                                     <p class="text-muted mt-1 mb-4">Kafeyin platformuna katıldığınız için size minnettarız ancak e-posta adresinize gönderdiğimiz doğrulama bağlantısı üzerinden gerekli işlemi gerçekleştirdikten sonra devam edebilirsiniz.</p>
+                                    @if (session('reSent'))
+                                        <div class="mb-4 font-medium text-sm text-success">
+                                            {{ __('Yeni bir doğrulama bağlantısı gönderilmiştir.') }}
+                                        </div>
+                                    @endif
                                     <div class="row">
                                         <div class="col-xl-9">
                                             <form action="{{ route('resend.verif') }}" method="post" class="authentication-form">
                                                 @csrf
                                                 <input type="hidden" name="email" value="{{\Illuminate\Support\Facades\Auth::user()->email}}">
-                                                @if (session('reSent'))
-                                                    <div class="mb-4 font-medium text-sm text-success">
-                                                        {{ __('Yeni bir doğrulama bağlantısı gönderilmiştir.') }}
-                                                    </div>
-                                                @endif
                                                 <div class="form-group mb-0 text-center">
                                                     <button class="btn btn-primary btn-block" type="submit">Yeni doğrulama bağlantısı gönder</button>
                                                 </div>

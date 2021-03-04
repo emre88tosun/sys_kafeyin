@@ -38,6 +38,27 @@ File: Main Css File
 
 /* 1. Fonts */
 
+#myBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    background-color: #ff8c00;
+    color: white;
+    cursor: pointer;
+    padding: 0px;
+    border-radius: 25px;
+    font-size: 36px;
+}
+
+#myBtn:hover {
+    background-color: #ff8100;
+}
 
 
 /* 2. General */
@@ -779,6 +800,40 @@ body {
           animation-fill-mode: initial;
 }
 
+.notification-list .noti-icon-badge2 {
+    display: inline-block;
+    position: absolute;
+    top: 50px;
+    right: 74px;
+    width: 12px;
+    height: 12px;
+    background-color: #ff8c00;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    -webkit-animation: blinker 1s linear infinite;
+    animation: blinker 1s linear infinite;
+    -webkit-animation-fill-mode: initial;
+    animation-fill-mode: initial;
+}
+
+.notification-list .noti-icon-badge3 {
+    display: inline-block;
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background-color: #ff8c00;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    -webkit-animation: blinker 1s linear infinite;
+    animation: blinker 1s linear infinite;
+    -webkit-animation-fill-mode: initial;
+    animation-fill-mode: initial;
+}
+
 .notification-list .notify-item {
   padding: 12px 20px;
 }
@@ -978,6 +1033,7 @@ body[data-layout=topnav] .profile-dropdown {
 .topbar-nav {
   margin: 0;
   padding: 0;
+
 }
 
 .topbar-nav .badge {

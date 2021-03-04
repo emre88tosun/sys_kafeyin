@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BrandNotification;
 use App\Models\OwnershipApplication;
 use App\Models\OwnershipApplicationReferral;
+use App\Models\PreRegisteredStoreUser;
+use App\Models\Store;
+use App\Models\StoreLog;
+use App\Models\StoreNotification;
 use App\Models\User;
+use App\Models\UserLog;
 use App\Notifications\BrandManagerInfoEmailWithButton;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class KafeyinController extends Controller
 {
@@ -87,7 +96,7 @@ class KafeyinController extends Controller
             return view('custom_errors.noref');
         }
 
-        $refCode = OwnershipApplicationReferral::where('referralCode',$ref)->with('brand')->first();
+        $refCode = OwnershipApplicationReferral::whereRaw("BINARY `referralCode`= ?",[$ref])->with('brand')->first();
         if(!$refCode || !$refCode->isValid){
             return view('custom_errors.nonvalidref');
         }
@@ -108,10 +117,11 @@ class KafeyinController extends Controller
     public function ilkbasvurugonder(Request $request)
     {
         $ref = $request->referral;
-        $refExt = OwnershipApplicationReferral::where('referralCode',$ref)->first();
+        $refExt = OwnershipApplicationReferral::whereRaw("BINARY `referralCode`= ?",[$ref])->first();
 
         $request->request->remove("_token");
         $request->request->add(['brandID'=>$refExt->brandID]);
+        $request->request->add(['status'=>"need_approval"]);
         $request->request->add(['ip'=>$request->ip()]);
 
         $data = [
@@ -146,17 +156,22 @@ class KafeyinController extends Controller
 
     }
 
-    public function ilkbasvurutamamlandi(Request  $request)
+    public function ilkbasvurutamamlandi(Request $request)
     {
+
+        $aUser = Auth::user();
+        if($aUser){
+            return redirect('/gateway');
+        }
+
         $success = $request->success;
         $ref = $request->referral;
 
-        $refExt = OwnershipApplicationReferral::where('referralCode',$ref)->first();
+        $refExt = OwnershipApplicationReferral::whereRaw("BINARY `referralCode`= ?",[$ref])->first();
 
         if(!$success || !$ref || !$refExt || $success != "true"){
             abort(404);
         }
-
 
         if(!$refExt->isUsed){
             abort(404);
@@ -177,5 +192,196 @@ class KafeyinController extends Controller
             $exists = false;
         }
         return $exists;
+    }
+
+    public function ilkbasvurutakip(Request $request)
+    {
+        $ref = $request->referral;
+        if(!$ref){
+            abort(404);
+        }
+
+        $application = OwnershipApplication::where('detail','LIKE', '%'.$ref.'%')->with('brand')->first();
+
+        if(!$application){
+            abort(404);
+        }
+
+        $detail = json_decode($application->detail,true);
+
+
+        return view('basvurular.ilkbasvurutakip')->with([
+            'application'=>$application,
+            'detail'=>$detail,
+        ]);
+
+
+    }
+
+    public function yoneticihesabiolustur(Request  $request)
+    {
+        $aUser = Auth::user();
+        if($aUser){
+            return redirect('/gateway');
+        }
+
+        $referral = $request->referral;
+        if(!$referral){
+            return view('custom_errors.404')->with([
+                'message'=>"Referans kodu olmadan hesabınızı oluşturamazsınız."
+            ]);
+        }
+        if(PreRegisteredStoreUser::whereRaw("BINARY `referralCode`= ?",[$referral])->doesntExist()){
+            return view('custom_errors.404')->with([
+                'message'=>"Sistemlerimizde kayıtlı olmayan bir referans kodu ile işleme devam edemezsiniz."
+            ]);
+        }
+
+        $preUser = PreRegisteredStoreUser::whereRaw("BINARY `referralCode`= ?",[$referral])->first();
+
+        if(User::where('email',$preUser->email)->exists()){
+            abort(404);
+        }
+
+        return view('basvurular.preuserkayit')->with([
+            'preUser'=>$preUser
+        ]);
+
+    }
+
+    public function yoneticihesabigonder(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'
+        ]);
+
+        $pUID = $request->pUID;
+        $preUser = PreRegisteredStoreUser::where('id',$pUID)->first();
+        if(!$preUser){
+            return redirect()->back();
+        }
+
+        if($preUser->brandID){
+            if(User::where('brandID',$preUser->brandID)->exists()){
+                User::where('brandID',$preUser->brandID)->first()->update([
+                    'brandID'=>null
+                ]);
+            }
+        }
+
+        $name = $request->name;
+        $surname = $request->surname;
+        $email = $request->email;
+        $password = Hash::make($request->password);
+        $gsm = substr($request->gsmNumber,3);
+        $userType = "store";
+        $isBrandManager = $preUser->isBrandManager;
+        $brandID = $preUser->brandID;
+
+        $data = [
+            'name'=>$name,
+            'surname'=>$surname,
+            'email'=>$email,
+            'password'=>$password,
+            'gsmNumber'=>$gsm,
+            'userType'=>$userType,
+            'isBrandManager'=>$isBrandManager,
+            'brandID'=>$brandID,
+        ];
+
+        $createdUser = User::create($data);
+
+        event(new Registered($createdUser));
+
+        if($preUser->isStoreManager){
+            Store::where('id',$preUser->storeID)->first()->update([
+                'email'=>$email
+            ]);
+        }
+
+
+        $detail1 = [
+            'ip'=>$request->ip(),
+            'actionDateTime'=>Carbon::now()
+        ];
+
+        PreRegisteredStoreUser::where('id',$pUID)->first()->update([
+            'detail'=>$detail1
+        ]);
+
+        if($preUser->applicationID){
+            if($preUser->isBrandManager){
+                $application = OwnershipApplication::where('id',$preUser->applicationID)->first();
+                $detail = $application->detail;
+                $jsonDetail = json_decode($detail,true);
+                $jsonDetail['brandManagerAccountCreated'] = "true";
+                OwnershipApplication::where('id',$application->id)->first()->update([
+                    'detail'=>$jsonDetail
+                ]);
+            }
+            if($preUser->isStoreManager){
+                $application2 = OwnershipApplication::where('id',$preUser->applicationID)->first();
+                $detail2 = $application2->detail;
+                $jsonDetail2 = json_decode($detail2,true);
+                $jsonDetail2['storeManagerAccountCreated'.$preUser->storeID] = "true";
+                OwnershipApplication::where('id',$application2->id)->first()->update([
+                    'detail'=>$jsonDetail2
+                ]);
+            }
+        }
+
+
+        if($preUser->isBrandManager){
+            $data11 = [
+                'brandID'=>$preUser->storeID,
+                'desc'=>"Kafeyin'e hoşgeldiniz!"
+            ];
+            BrandNotification::create($data11);
+        }
+
+        if($preUser->isStoreManager){
+            $data12 = [
+                'storeID'=>$preUser->storeID,
+                'desc'=>"Kafeyin'e hoşgeldiniz!"
+            ];
+            StoreNotification::create($data12);
+
+            $storeLogDetail = [
+                'ip'=>$request->ip()
+            ];
+
+            $storeLogData = [
+                'storeID'=>$preUser->storeID,
+                'userID'=>$createdUser->id,
+                'desc'=>$createdUser->name." ".$createdUser->surname.", mağazaya yönetici olarak atandı.",
+                'detail'=>$storeLogDetail
+            ];
+
+            StoreLog::create($storeLogData);
+
+        }
+
+        $logDetail = [
+            'ip'=>$request->ip()
+        ];
+
+        $logData = [
+            'userID'=>$createdUser->id,
+            'desc'=>"Hesabınız oluşturuldu.",
+            'detail'=>$logDetail
+        ];
+
+        UserLog::create($logData);
+
+
+
+
+
+        return redirect('/login')->with([
+            'managerAccountCreated'=>true
+        ]);
+
     }
 }

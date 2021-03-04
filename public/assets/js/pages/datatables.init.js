@@ -221,7 +221,6 @@
                 }
             });
             var table5 = $('#dtCommon5').DataTable({
-
                 "aLengthMenu": [
                     [10, 30, 50, -1],
                     [10, 30, 50, "Tüm"]
@@ -816,10 +815,6 @@
                     orderable: false,
                     targets: 4
                 } ],
-                select: {
-                    style:    'multi',
-                    selector: 'td:first-child',
-                },
             });
 
             var tblActCards = $('#tblActCards').DataTable({
@@ -877,10 +872,79 @@
 
             });
 
+
+            var tblUserLogs = $('#tblUserLogs').DataTable({
+                dom: 'rtip',
+                "iDisplayLength": 10,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='uil uil-angle-left'>",
+                        "next": "<i class='uil uil-angle-right'>"
+                    }
+                },
+                "drawCallback": function drawCallback() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                "order": [[ 2, "desc" ]],
+                columnDefs: [ {
+                    orderable: false,
+                    targets:   0
+                },{
+                    orderable: false,
+                    targets: 1
+                } ],
+
+            });
+            var tblStoreLogs = $('#tblStoreLogs').DataTable({
+                dom: 'rtip',
+                "iDisplayLength": 10,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='uil uil-angle-left'>",
+                        "next": "<i class='uil uil-angle-right'>"
+                    }
+                },
+                "drawCallback": function drawCallback() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                "order": [[ 2, "desc" ]],
+                columnDefs: [ {
+                    orderable: false,
+                    targets:   0
+                },{
+                    orderable: false,
+                    targets: 1
+                } ],
+
+            });
+            var tblBrandLogs = $('#tblBrandLogs').DataTable({
+                dom: 'rtip',
+                "iDisplayLength": 10,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='uil uil-angle-left'>",
+                        "next": "<i class='uil uil-angle-right'>"
+                    }
+                },
+                "drawCallback": function drawCallback() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                "order": [[ 2, "desc" ]],
+                columnDefs: [ {
+                    orderable: false,
+                    targets:   0
+                },{
+                    orderable: false,
+                    targets: 1
+                } ],
+
+            });
+
             function actionToUrl(url, params, newWindow) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 var form = $('<form>');
                 form.attr('action', url);
-                form.attr('method', 'GET');
+                form.attr('method', 'POST');
                 if (newWindow) {
                     form.attr('target', '_blank');
                 }
@@ -908,6 +972,14 @@
                         addParam(key, params[key]);
                     }
                 }
+
+                var input2 = $('<input type="hidden">');
+                input2.attr({
+                    'id': '_token',
+                    'name': '_token',
+                    'value': CSRF_TOKEN,
+                });
+                form.append(input2);
 
                 // Submit the form, then remove it from the page
                 form.appendTo(document.body);

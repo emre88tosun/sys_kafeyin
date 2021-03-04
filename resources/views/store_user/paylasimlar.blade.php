@@ -163,7 +163,7 @@
         </div>
         @if($isPremiumEnabled)
             @if($user->magaza->brand->isPremium)
-                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/payekle">
+                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" id="frmPayEkle" action="/yoneticipaneli/payekle">
                     @csrf
                     <fieldset>
                         <div class="form-group">
@@ -172,8 +172,8 @@
                                 <input type="file" id="image" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="square landscape portrait" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                             </div>
                         </div>
-                        <div class="offset-md-0">
-                            <input type="submit" class="btn btn-primary ml-3" value="Ekle">
+                        <div class="col-md-12">
+                            <input type="submit" class="btn btn-primary" value="Ekle">
                         </div>
                     </fieldset>
                 </form>
@@ -182,7 +182,7 @@
                     <div class="alert alert-danger ml-4 mr-4">Günlük paylaşım hakkınız kalmadığı için yeni bir paylaşım ekleyemezsiniz.</div>
                     <div class="alert alert-primary ml-4 mr-4">Markanızı Premium Plan'a taşıyıp gün içerisinde istediğiniz kadar paylaşım ekleyebilirsiniz.</div>
                 @else
-                    <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/payekle">
+                    <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" id="frmPayEkle" action="/yoneticipaneli/payekle">
                         @csrf
                         <fieldset>
                             <div class="form-group">
@@ -191,8 +191,8 @@
                                     <input type="file" id="image" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="square landscape portrait" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                                 </div>
                             </div>
-                            <div class="offset-md-0">
-                                <input type="submit" class="btn btn-primary ml-3" value="Ekle">
+                            <div class="col-md-12">
+                                <input type="submit" class="btn btn-primary" value="Ekle">
                             </div>
                         </fieldset>
                     </form>
@@ -202,7 +202,7 @@
             @if($user->magaza->leftDailyStoryCount == 0)
                 <div class="alert alert-danger ml-4 mr-4">Günlük paylaşım hakkınız kalmadığı için yeni bir paylaşım ekleyemezsiniz.</div>
             @else
-                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/payekle">
+                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" id="frmPayEkle" action="/yoneticipaneli/payekle">
                     @csrf
                     <fieldset>
                         <div class="form-group">
@@ -211,8 +211,8 @@
                                 <input type="file" id="image" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="square landscape portrait" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                             </div>
                         </div>
-                        <div class="offset-md-0">
-                            <input type="submit" class="btn btn-primary ml-3" value="Ekle">
+                        <div class="col-md-12">
+                            <input type="submit" class="btn btn-primary" value="Ekle">
                         </div>
                     </fieldset>
                 </form>
@@ -234,6 +234,17 @@
     <script>
         $(document).ready(function () {
             $.fn.dataTable.moment( 'DD/MM/YYYY HH:mm' );
+        });
+    </script>
+    <script type="text/javascript">
+        $('#frmPayEkle').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
         });
     </script>
     <script>

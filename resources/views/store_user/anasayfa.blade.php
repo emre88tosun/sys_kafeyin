@@ -18,7 +18,6 @@
                 </ol>
             </nav>
             <h4 class="mb-1 mt-0">Hoşgeldiniz, {{$user->name}} {{$user->surname}}!</h4>
-
         </div>
     </div>
 @endsection
@@ -130,7 +129,7 @@
                                                              class="avatar-sm rounded-circle mr-3 mb-2" height="24"
                                                              alt="avatar">
                                                         <div class="media-body">
-                                                            <p class="mt-0 mb-0 font-size-15 font-weight-bold text-dark">{{$yorum->commenter->name}} {{$yorum->commenter->surname}}</p>
+                                                            <p class="mt-0 mb-0 font-size-15 font-weight-bold text-muted">{{$yorum->commenter->name}} {{$yorum->commenter->surname}}</p>
                                                             @if(\Carbon\Carbon::now()->diffInMinutes($yorum->created_at) < 60)
                                                                 <h6 class="text-primary font-weight-normal mt-0 mb-2">{{\Carbon\Carbon::now()->diffInMinutes($yorum->created_at)}}
                                                                     dakika önce</h6>
@@ -220,7 +219,7 @@
                             @endif
                         </div>
                         <div @if($isPremiumPlanEnabled && !$isStatisticsFree && !$user->brand->isPremium)  class="col-xl-6" @else  class="col-xl-5" @endif >
-                            <h5 class="card-title header-title border-bottom p-3 mb-0">Görüntülemelerin şehirlere göre
+                            <h5 class="card-title header-title border-bottom p-3 mb-0">Görüntülenmelerin şehirlere göre
                                 dağılımı <span class="text-muted font-size-14 font-weight-normal">(Tüm zamanlar)</span>
                             </h5>
                             @if($isPremiumPlanEnabled)
@@ -358,7 +357,7 @@
                                             <input type="radio" id="answer" name="answer" value="1"
                                                    class="custom-control-input" checked>
                                             <label class="custom-control-label"
-                                                   for="isActive">{{$survey->trueString}}</label>
+                                                   for="answer">{{$survey->trueString}}</label>
                                         </div>
                                         <div class="custom-control custom-radio mt-2">
                                             <input type="radio" id="answer2" name="answer" value="0"
@@ -582,8 +581,10 @@
                                 eklenen @if(count($lastFiveStoreComments) > 0) {{count($lastFiveStoreComments)}}
                                 yorum @else yorumlar @endif </h5>
                             @if(count($lastFiveStoreComments) == 0)
-                                <p class="text-center text-danger mt-3 font-weight-bold">Henüz mağazanıza yorum
-                                    eklenmedi.</p>
+                                <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                    <i class="uil uil-comment-slash font-size-56 "></i>
+                                    <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanıza yorum eklenmedi.</p>
+                                </div>
                             @else
                                 <div class="slimscroll ml-3 mt-3 mb-3 mr-1" style="max-height: 320px;">
                                     @foreach($lastFiveStoreComments as $yorum)
@@ -593,7 +594,7 @@
                                                      class="avatar-sm rounded-circle mr-3 mb-2" height="24"
                                                      alt="avatar">
                                                 <div class="media-body">
-                                                    <p class="mt-0 mb-0 font-size-15 font-weight-bold text-dark">{{$yorum->commenter->name}} {{$yorum->commenter->surname}}</p>
+                                                    <p class="mt-0 mb-0 font-size-15 font-weight-bold text-muted">{{$yorum->commenter->name}} {{$yorum->commenter->surname}}</p>
                                                     @if(\Carbon\Carbon::now()->diffInMinutes($yorum->created_at) < 60)
                                                         <h6 class="text-primary font-weight-normal mt-0 mb-2">{{\Carbon\Carbon::now()->diffInMinutes($yorum->created_at)}}
                                                             dakika önce</h6>
@@ -679,16 +680,38 @@
                             </h5>
                             @if($isPremiumPlanEnabled)
                                 @if($isStatisticsFree)
-                                    <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                    @if(count($viewsByCity) == 0)
+                                        <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                            <i class="uil uil-eye-slash font-size-56 "></i>
+                                            <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanızı görüntülemedi.</p>
+                                        </div>
+                                    @else
+                                        <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                    @endif
                                 @else
                                     @if($user->brand->isPremium)
-                                        <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                        @if(count($viewsByCity) == 0)
+                                            <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                <i class="uil uil-eye-slash font-size-56 "></i>
+                                                <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanızı görüntülemedi.</p>
+                                            </div>
+                                        @else
+                                            <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                        @endif
                                     @else
                                         <div class="alert alert-primary ml-4 mr-4 mt-3">Markanızı Premium Plan'a taşıyarak mağazanızın detaylı istatistiklerine ulaşabilirsiniz.</div>
                                     @endif
                                 @endif
                             @else
-                                <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                @if(count($viewsByCity) == 0)
+                                    <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                        <i class="uil uil-eye-slash font-size-56 "></i>
+                                        <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanızı görüntülemedi.</p>
+                                    </div>
+                                @else
+                                    <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                @endif
+
                             @endif
                         </div>
                     </div>
@@ -701,20 +724,12 @@
                                     class="text-muted font-size-14 font-weight-normal">(Tüm zamanlar)</span></h5>
                             @if($isPremiumPlanEnabled)
                                 @if($isStatisticsFree)
-                                    @foreach($favsByCity as $cityFav)
-                                        @if($cityFav['count'] != 0)
-                                            <div class="media px-4 py-4 border-bottom">
-                                                <div class="media-body">
-                                                    <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">{{$cityFav['count']}}</h4>
-                                                    <span class="text-muted">{{$cityFav['city']}}</span>
-                                                </div>
-                                                <h4 class="font-weight-bold text-primary mr-5">{{round(($cityFav['count']/count($user->magaza->favorites)*100),1)}}
-                                                    %</h4>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    @if($user->brand->isPremium)
+                                    @if(count($favsByCity) == 0)
+                                        <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                            <i class="uil uil-folder-slash font-size-56 "></i>
+                                            <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanızı favorilerine eklemedi.</p>
+                                        </div>
+                                    @else
                                         @foreach($favsByCity as $cityFav)
                                             @if($cityFav['count'] != 0)
                                                 <div class="media px-4 py-4 border-bottom">
@@ -727,23 +742,53 @@
                                                 </div>
                                             @endif
                                         @endforeach
+                                    @endif
+                                @else
+                                    @if($user->brand->isPremium)
+                                        @if(count($favsByCity) == 0)
+                                            <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                <i class="uil uil-folder-slash font-size-56 "></i>
+                                                <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanızı favorilerine eklemedi.</p>
+                                            </div>
+                                        @else
+                                            @foreach($favsByCity as $cityFav)
+                                                @if($cityFav['count'] != 0)
+                                                    <div class="media px-4 py-4 border-bottom">
+                                                        <div class="media-body">
+                                                            <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">{{$cityFav['count']}}</h4>
+                                                            <span class="text-muted">{{$cityFav['city']}}</span>
+                                                        </div>
+                                                        <h4 class="font-weight-bold text-primary mr-5">{{round(($cityFav['count']/count($user->magaza->favorites)*100),1)}}
+                                                            %</h4>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        @endif
                                     @else
                                         <div class="alert alert-primary ml-4 mr-4 mt-3">Markanızı Premium Plan'a taşıyarak mağazanızın detaylı istatistiklerine ulaşabilirsiniz.</div>
                                     @endif
                                 @endif
                             @else
-                                @foreach($favsByCity as $cityFav)
-                                    @if($cityFav['count'] != 0)
-                                        <div class="media px-4 py-4 border-bottom">
-                                            <div class="media-body">
-                                                <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">{{$cityFav['count']}}</h4>
-                                                <span class="text-muted">{{$cityFav['city']}}</span>
+                                @if(count($favsByCity) == 0)
+                                    <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                        <i class="uil uil-folder-slash font-size-56 "></i>
+                                        <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanızı favorilerine eklemedi.</p>
+                                    </div>
+                                @else
+                                    @foreach($favsByCity as $cityFav)
+                                        @if($cityFav['count'] != 0)
+                                            <div class="media px-4 py-4 border-bottom">
+                                                <div class="media-body">
+                                                    <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">{{$cityFav['count']}}</h4>
+                                                    <span class="text-muted">{{$cityFav['city']}}</span>
+                                                </div>
+                                                <h4 class="font-weight-bold text-primary mr-5">{{round(($cityFav['count']/count($user->magaza->favorites)*100),1)}}
+                                                    %</h4>
                                             </div>
-                                            <h4 class="font-weight-bold text-primary mr-5">{{round(($cityFav['count']/count($user->magaza->favorites)*100),1)}}
-                                                %</h4>
-                                        </div>
-                                    @endif
-                                @endforeach
+                                        @endif
+                                    @endforeach
+                                @endif
+
                             @endif
 
                         </div>
@@ -816,8 +861,10 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        <p class="m-0 text-center mt-2 font-weight-bold text-danger">Henüz mağazanızın hiçbir
-                                            ürünü için QR kod kullanılmadı.</p>
+                                        <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                            <i class="uil uil-mobey-bill-slash font-size-56 "></i>
+                                            <p class="font-weight-bold">Henüz mağazanızın hiçbir ürünü için QR kod kullanılmadı.</p>
+                                        </div>
                                     @endif
                                 @else
                                     @if($user->brand->isPremium)
@@ -846,8 +893,10 @@
                                                 @endforeach
                                             </div>
                                         @else
-                                            <p class="m-0 text-center mt-2 font-weight-bold text-danger">Henüz mağazanızın hiçbir
-                                                ürünü için QR kod kullanılmadı.</p>
+                                            <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                <i class="uil uil-mobey-bill-slash font-size-56 "></i>
+                                                <p class="font-weight-bold">Henüz mağazanızın hiçbir ürünü için QR kod kullanılmadı.</p>
+                                            </div>
                                         @endif
                                     @else
                                         <div class="alert alert-primary ml-4 mr-4 mt-3">Markanızı Premium Plan'a taşıyarak mağazanızın detaylı istatistiklerine ulaşabilirsiniz.</div>
@@ -879,8 +928,10 @@
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="m-0 text-center mt-2 font-weight-bold text-danger">Henüz mağazanızın hiçbir
-                                        ürünü için QR kod kullanılmadı.</p>
+                                    <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                        <i class="uil uil-mobey-bill-slash font-size-56 "></i>
+                                        <p class="font-weight-bold">Henüz mağazanızın hiçbir ürünü için QR kod kullanılmadı.</p>
+                                    </div>
                                 @endif
                             @endif
 
@@ -903,7 +954,7 @@
                                             <input type="radio" id="answer" name="answer" value="1"
                                                    class="custom-control-input" checked>
                                             <label class="custom-control-label"
-                                                   for="isActive">{{$survey->trueString}}</label>
+                                                   for="answer">{{$survey->trueString}}</label>
                                         </div>
                                         <div class="custom-control custom-radio mt-2">
                                             <input type="radio" id="answer2" name="answer" value="0"
@@ -1034,13 +1085,13 @@
                         <a href="javascript:void(0);" data-toggle="modal" data-target="#approvalInfoDialog" class="card-title header-title border-bottom p-3 mb-0 mt-0"><i class="uil-info-circle"></i></a>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="/yoneticipaneli/kartonayla">
+                        <form id="frmApproveCard" method="post" action="/yoneticipaneli/kartonayla">
                             @csrf
                             <fieldset>
                                 <div class="form-group">
                                     <input type="text" oninput="let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);" id="referralCode" name="referralCode" class="form-control" required minlength="8" maxlength="8" placeholder="8 karakterlik referans kodu"/>
                                 </div>
-                                <input class="btn btn-outline-primary btn-sm w-100 mt-0 float-right" type="submit" value="Onayla">
+                                <input class="btn btn-primary btn-sm w-100 mt-0 float-right" id="btnApproveCard" type="submit" value="Onayla">
                             </fieldset>
                         </form>
                     </div>
@@ -1256,17 +1307,11 @@
                     <div class="card">
                         <h5 class="card-title header-title border-bottom p-3 mb-0">En fazla görüntülenen
                             ürünleriniz</h5>
-                        <div class="mt-2 mb-2">
-                            <div class="col-12">
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <p class="m-0 text-center mr-2 font-weight-bold text-danger">Henüz mağazanızın
-                                            menüsüne ürün eklemediniz.</p>
-                                        <a href="/yoneticipaneli/urunler"
-                                           class="btn btn-sm btn-secondary mr-2 mt-2 float-right">Ürünler</a>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-12 text-center" style="height: 23vh">
+                            <i class="uil uil-coffee font-size-56 "></i>
+                            <p class="font-weight-bold">Henüz mağazanızın menüsüne ürün eklemediniz.</p>
+                            <a href="/yoneticipaneli/urunler"
+                               class="btn btn-sm btn-secondary mr-2 mt-2 mb-2 float-right">Ürünler</a>
                         </div>
                     </div>
                 @else
@@ -1411,6 +1456,16 @@
     <script src="{{ URL::asset('assets/js/pages/sweet-alerts.init.js')}}"></script>
     <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
     <script src="{{ URL::asset('assets/libs/swiper/swiper-bundle.min.js')}}"></script>
+    <script type="text/javascript">
+        $('#frmApproveCard').submit(function(e){
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+    </script>
     @if($hasMagaza)
         <script>
             var galleryTop = new Swiper('.gallery-top', {
@@ -1418,7 +1473,7 @@
                 spaceBetween: 10,
                 autoplay: true,
                 loop: false,
-                loopedSlides: 5, //looped slides should be the same
+                loopedSlides: 5,
                 navigation: {
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
@@ -1600,7 +1655,6 @@
                 yaxis: {
                     labels: {
                         formatter: function formatter(val) {
-                            //return Math.round(val);
                             return val.toFixed(1);
                         }
                     }

@@ -48,7 +48,7 @@
                                 <div class="media border-bottom">
                                     <img src="{{$yorum->commenter->avatar}}" class="avatar-sm rounded-circle mr-3" height="24" alt="avatar">
                                     <div class="media-body">
-                                        <p class="mt-0 mb-0 font-size-15 font-weight-bold text-dark">{{$yorum->commenter->name}} {{$yorum->commenter->surname}}</p>
+                                        <p class="mt-0 mb-0 font-size-15 font-weight-bold text-muted">{{$yorum->commenter->name}} {{$yorum->commenter->surname}}</p>
                                         @if(\Carbon\Carbon::now()->diffInMinutes($yorum->created_at) < 60)
                                             <h6 class="text-primary font-weight-normal mt-0 mb-2">{{\Carbon\Carbon::now()->diffInMinutes($yorum->created_at)}}
                                                 dakika önce</h6>

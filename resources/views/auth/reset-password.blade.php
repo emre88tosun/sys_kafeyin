@@ -25,7 +25,7 @@
                                     @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>
                                     <br>@endif
 
-                                    <form action="{{ route('password.update') }}" method="post" class="authentication-form">
+                                    <form id="frmResPass" action="{{ route('password.update') }}" method="post" class="authentication-form">
                                         @csrf
                                         <input type="hidden" name="token" value="{{ $request->route('token') }}">
                                         <div class="form-group">

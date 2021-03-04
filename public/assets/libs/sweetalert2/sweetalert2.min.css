@@ -289,9 +289,9 @@
     box-sizing: border-box;
     flex-direction: column;
     justify-content: center;
-    width: 32em;
+    width: 28em;
     max-width: 100%;
-    padding: 1.25em;
+    padding: .95em;
     border: none;
     border-radius: .3125em;
     background: #fff;
@@ -319,7 +319,7 @@
     margin: 0 0 .4em;
     padding: 0;
     color: #595959;
-    font-size: 1.875em;
+    font-size: 24px;
     font-weight: 600;
     text-align: center;
     text-transform: none;
@@ -404,7 +404,7 @@
     background: initial;
     background-color: #3085d6;
     color: #fff;
-    font-size: 1.0625em
+    font-size: 12px
 }
 
 .swal2-styled.swal2-cancel {
@@ -413,7 +413,7 @@
     background: initial;
     background-color: #aaa;
     color: #fff;
-    font-size: 1.0625em
+    font-size: 12px
 }
 
 .swal2-styled:focus {
@@ -473,7 +473,7 @@
     margin: 0;
     padding: 0;
     color: #545454;
-    font-size: 1.125em;
+    font-size: 16px;
     font-weight: 400;
     line-height: normal;
     text-align: center;

@@ -17,4 +17,9 @@ class OwnershipApplicationReferral extends Model
     {
         return $this->hasOne(Brand::class,'id','brandID');
     }
+
+    public function basvuru()
+    {
+        return $this->hasOne(OwnershipApplication::class,'referralID','id');
+    }
 }

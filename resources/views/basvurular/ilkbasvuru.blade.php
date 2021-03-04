@@ -84,8 +84,8 @@
                                                                 yönetim panelleri aktif hale gelecektir. Başvuru
                                                                 sürecinin
                                                                 sağlıklı ilerlemesi adına gireceğiniz e-posta adresi ve
-                                                                telefon numarası gibi iletişim bilgilerin eksiksiz ve
-                                                                doğru olduğundan emin olunuz.</p>
+                                                                telefon numarası gibi iletişim bilgilerinin eksiksiz, doğru ve aktif olarak kullanıldığından
+                                                                emin olunuz.</p>
                                                         @else
                                                             <p>Aşağıda bulunan başvuru formunu doldurup göndermenizin
                                                                 ardından Kafeyin ekibi size ulaşacak ve marka &
@@ -93,8 +93,7 @@
                                                                 yönetim panelleri aktif hale gelecektir. Başvuru
                                                                 sürecinin
                                                                 sağlıklı ilerlemesi adına gireceğiniz e-posta adresi ve
-                                                                telefon numarası gibi iletişim bilgilerin eksiksiz ve
-                                                                doğru olduğundan emin olunuz.</p>
+                                                                telefon numarası gibi iletişim bilgilerinin eksiksiz, doğru ve aktif olarak kullanıldığından emin olunuz.</p>
                                                         @endif
                                                         <hr>
                                                         <h5 class="mb-1 mt-0 ml-0 font-weight-bold">Başvuru Formu</h5>
@@ -196,7 +195,7 @@
                                                                                                class="col-md-12 col-form-label"
                                                                                                data-toggle="tooltip"
                                                                                                data-placement="left"
-                                                                                               title="Girdiğiniz e-posta adresi bilgisinin eksiksiz ve doğru olduğundan emin olunuz. Kafeyin Yönetici Panelini kullanırken birçok işlemi kayıt olurken kullandığınız e-posta adresi üzerinden gerçekleştireceksiniz.">Marka
+                                                                                               title="Girdiğiniz e-posta adresi bilgisinin eksiksiz, doğru ve aktif olarak kullanıldığından emin olunuz. Kafeyin Yönetici Panelini kullanırken birçok işlemi kayıt olurken kullandığınız e-posta adresi üzerinden gerçekleştireceksiniz.">Marka
                                                                                             Yöneticisi E-posta
                                                                                             Adresi</label>
                                                                                         <div class="col-md-12">
@@ -450,7 +449,7 @@
                                                                                                 class="col-md-12 col-form-label"
                                                                                                 data-toggle="tooltip"
                                                                                                 data-placement="left"
-                                                                                                title="Girdiğiniz e-posta adresi bilgisinin eksiksiz ve doğru olduğundan emin olunuz. Kafeyin Yönetici Panelini kullanırken birçok işlemi kayıt olurken kullandığınız e-posta adresi üzerinden gerçekleştireceksiniz.">Mağaza
+                                                                                                title="Girdiğiniz e-posta adresi bilgisinin eksiksiz, doğru ve aktif olarak kullanıldığından emin olunuz. Kafeyin Yönetici Panelini kullanırken birçok işlemi kayıt olurken kullandığınız e-posta adresi üzerinden gerçekleştireceksiniz.">Mağaza
                                                                                                 Yöneticisi E-posta
                                                                                                 Adresi</label>
                                                                                             <div class="col-md-12">
@@ -503,6 +502,13 @@
                                                                         @endfor
                                                                         <div id="stepTamamla">
                                                                             <div class="row">
+                                                                                <div id="loadingFinal" class="col-12"
+                                                                                     style="display: block">
+                                                                                    <div class="text-center">
+                                                                                        <div class="spinner-border text-primary mt-4" role="status"> <span class="sr-only"></span> </div>
+
+                                                                                    </div>
+                                                                                </div>
                                                                                 <div id="allStepsDone" class="col-12"
                                                                                      style="display: none">
                                                                                     <div class="text-center">
@@ -582,8 +588,21 @@
     <script src="{{ URL::asset('assets/plugins/inputmask/jquery.inputmask.bundle.min.js') }}"></script>
     <script src="{{ URL::asset('assets/libs/smartwizard/smartwizard.min.js') }}"></script>
     <script type="text/javascript">
-        $('#basvuruForm').submit(function (event) {
-            event.preventDefault();
+        $('#basvuruForm').submit(function(e){
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+        $(document).ready(function() {
+            $(window).keydown(function(event){
+                if(event.keyCode === 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
         });
         var stos = @json($stos);
 
@@ -621,12 +640,20 @@
 
             });
 
-            $("#basvuruWizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            $("#basvuruWizard").on("showStep", async function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
                 $('#basvuruWizard').smartWizard("stepState", [stepNumber], "error-off");
                 if (stepPosition === 'final') {
+                    if(document.getElementById("loadingFinal").style.display === "none"){
+                        document.getElementById("loadingFinal").style.display = "block";
+                        document.getElementById("allStepsDone").style.display = "none";
+                        document.getElementById("allStepsNotDone").style.display = "none";
+                        document.getElementById("duplicateEmail").style.display = "none";
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 2300));
                     $("#btnBasvuruGonder").removeClass('disabled');
                     $("#btnBasvuruGonder").show();
                     if (document.getElementsByClassName("nav-item danger").length > 0) {
+                        document.getElementById("loadingFinal").style.display = "none";
                         document.getElementById("allStepsDone").style.display = "none";
                         document.getElementById("allStepsNotDone").style.display = "block";
                         document.getElementById("duplicateEmail").style.display = "none";
@@ -651,19 +678,20 @@
                                 }
                             });
                             if(emails.length > fakeEmails.length){
+                                document.getElementById("loadingFinal").style.display = "none";
                                 document.getElementById("allStepsDone").style.display = "none";
                                 document.getElementById("allStepsNotDone").style.display = "none";
                                 document.getElementById("duplicateEmail").style.display = "block";
                                 $("#btnBasvuruGonder").addClass('disabled');
                             }else{
+                                document.getElementById("loadingFinal").style.display = "none";
                                 document.getElementById("allStepsDone").style.display = "block";
                                 document.getElementById("allStepsNotDone").style.display = "none";
                                 document.getElementById("duplicateEmail").style.display = "none";
                                 $("#btnBasvuruGonder").removeClass('disabled');
                             }
-                            console.log("emails length: "+emails.length);
-                            console.log("fake emails length: "+fakeEmails.length);
                         }else{
+                            document.getElementById("loadingFinal").style.display = "none";
                             document.getElementById("allStepsDone").style.display = "block";
                             document.getElementById("allStepsNotDone").style.display = "none";
                             document.getElementById("duplicateEmail").style.display = "none";
@@ -985,7 +1013,24 @@
                         if (!soname || !sosurname || !soemail || !sogsm || !validateEmail(soemail) || sogsm.includes('_')) {
                             $('#basvuruWizard').smartWizard("stepState", [i + 1], "error-on");
                         } else {
-                            $('#basvuruWizard').smartWizard("stepState", [i + 1], "done-on");
+                            $.ajax({
+                                url: "/checkemail",
+                                type:"GET",
+                                data:{
+                                    email:soemail,
+                                },
+                                success:function(response){
+                                    if(response){
+                                        $('#basvuruWizard').smartWizard("stepState", [i + 1], "error-on");
+                                    }else{
+
+                                        $('#basvuruWizard').smartWizard("stepState", [i + 1], "done-on");
+                                    }
+                                },
+                                error:function(response){
+                                    $('#basvuruWizard').smartWizard("stepState", [i + 1], "error-on");
+                                }
+                            });
                         }
                     } else {
                         var smname1 = $('#storeManagerName' + stos[i]['id']).val();
@@ -997,7 +1042,24 @@
                             !smname1 || !smsurname1 || !smemail1 || !smgsm1 || !validateEmail(smemail1) || smgsm1.includes('_')) {
                             $('#basvuruWizard').smartWizard("stepState", [i + 1], "error-on");
                         } else {
-                            $('#basvuruWizard').smartWizard("stepState", [i + 1], "done-on");
+                            $.ajax({
+                                url: "/checkemail",
+                                type:"GET",
+                                data:{
+                                    email:smemail1,
+                                },
+                                success:function(response){
+                                    if(response){
+                                        $('#basvuruWizard').smartWizard("stepState", [i + 1], "error-on");
+                                    }else{
+
+                                        $('#basvuruWizard').smartWizard("stepState", [i + 1], "done-on");
+                                    }
+                                },
+                                error:function(response){
+                                    $('#basvuruWizard').smartWizard("stepState", [i + 1], "error-on");
+                                }
+                            });
                         }
 
                     }
@@ -1156,9 +1218,42 @@
             });
             $('#storeOwnerEmail{{$stos[$i]->id}}').change(function () {
                 if ($('#storeOwnerEmail{{$stos[$i]->id}}').val() && validateEmail($('#storeOwnerEmail{{$stos[$i]->id}}').val())) {
-                    if (document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}")) {
-                        document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}").remove();
-                        $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                    if($('#ownerIsManager{{$stos[$i]->id}}').prop('checked')){
+                        var node2323 = document.createElement("SPAN");
+                        var textnode2323 = document.createTextNode("Bu e-posta adresi ile kayıtlı kullanıcı bulunuyor.");
+                        node2323.appendChild(textnode2323);
+                        node2323.className = "invalid-feedback";
+                        node2323.role = "alert";
+                        node2323.id = "if-soemailErr{{$stos[$i]->id}}2";
+                        $.ajax({
+                            url: "/checkemail",
+                            type:"GET",
+                            data:{
+                                email:$('#storeOwnerEmail{{$stos[$i]->id}}').val(),
+                            },
+                            success:function(response){
+                                if(response){
+                                    if (document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}")) {
+                                        document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}").remove();
+                                        $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                                    }
+                                    if (!document.getElementById("if-soemailErr{{$stos[$i]->id}}2")) {
+                                        document.getElementById("storeOwnerEmail{{$stos[$i]->id}}").parentElement.appendChild(node2323);
+                                        $('#storeOwnerEmail{{$stos[$i]->id}}').addClass("is-invalid");
+                                    }
+                                }else{
+                                    if (document.getElementById("if-soemailErr{{$stos[$i]->id}}2")) {
+                                        document.getElementById("if-soemailErr{{$stos[$i]->id}}2").remove();
+                                        $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                                    }
+                                }
+                            },
+                        });
+                    }else{
+                        if (document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}")) {
+                            document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}").remove();
+                            $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                        }
                     }
                 } else {
                     if (!document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}")) {
@@ -1231,11 +1326,37 @@
                 }
             });
             $('#storeManagerEmail{{$stos[$i]->id}}').change(function () {
+                var node1212 = document.createElement("SPAN");
+                var textnode1212 = document.createTextNode("Bu e-posta adresi ile kayıtlı kullanıcı bulunuyor.");
+                node1212.appendChild(textnode1212);
+                node1212.className = "invalid-feedback";
+                node1212.role = "alert";
+                node1212.id = "if-smemailErr{{$stos[$i]->id}}2";
                 if ($('#storeManagerEmail{{$stos[$i]->id}}').val() && validateEmail($('#storeManagerEmail{{$stos[$i]->id}}').val())) {
-                    if (document.getElementById("if-smemailErr{{$i}}{{$stos[$i]->id}}")) {
-                        document.getElementById("if-smemailErr{{$i}}{{$stos[$i]->id}}").remove();
-                        $('#storeManagerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
-                    }
+                    $.ajax({
+                        url: "/checkemail",
+                        type:"GET",
+                        data:{
+                            email:$('#storeManagerEmail{{$stos[$i]->id}}').val(),
+                        },
+                        success:function(response){
+                            if(response){
+                                if (document.getElementById("if-smemailErr{{$i}}{{$stos[$i]->id}}")) {
+                                    document.getElementById("if-smemailErr{{$i}}{{$stos[$i]->id}}").remove();
+                                    $('#storeManagerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                                }
+                                if (!document.getElementById("if-smemailErr{{$stos[$i]->id}}2")) {
+                                    document.getElementById("storeManagerEmail{{$stos[$i]->id}}").parentElement.appendChild(node1212);
+                                    $('#storeManagerEmail{{$stos[$i]->id}}').addClass("is-invalid");
+                                }
+                            }else{
+                                if (document.getElementById("if-smemailErr{{$stos[$i]->id}}2")) {
+                                    document.getElementById("if-smemailErr{{$stos[$i]->id}}2").remove();
+                                    $('#storeManagerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                                }
+                            }
+                        },
+                    });
                 } else {
                     if (!document.getElementById("if-smemailErr{{$i}}{{$stos[$i]->id}}")) {
                         var node19 = document.createElement("SPAN");
@@ -1283,6 +1404,40 @@
                 $('#storeManagerSurname{{$stos[$i]->id}}').addClass('bg-soft-dark2');
                 $('#storeManagerEmail{{$stos[$i]->id}}').addClass('bg-soft-dark2');
                 $('#storeManagerGSM{{$stos[$i]->id}}').addClass('bg-soft-dark2');
+                if (document.getElementById("if-smemailErr{{$stos[$i]->id}}2")) {
+                    document.getElementById("if-smemailErr{{$stos[$i]->id}}2").remove();
+                    $('#storeManagerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                }
+                var node3434 = document.createElement("SPAN");
+                var textnode3434 = document.createTextNode("Bu e-posta adresi ile kayıtlı kullanıcı bulunuyor.");
+                node3434.appendChild(textnode3434);
+                node3434.className = "invalid-feedback";
+                node3434.role = "alert";
+                node3434.id = "if-soemailErr{{$stos[$i]->id}}2";
+                $.ajax({
+                    url: "/checkemail",
+                    type:"GET",
+                    data:{
+                        email:$('#storeOwnerEmail{{$stos[$i]->id}}').val(),
+                    },
+                    success:function(response){
+                        if(response){
+                            if (document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}")) {
+                                document.getElementById("if-soemailErr{{$i}}{{$stos[$i]->id}}").remove();
+                                $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                            }
+                            if (!document.getElementById("if-soemailErr{{$stos[$i]->id}}2")) {
+                                document.getElementById("storeOwnerEmail{{$stos[$i]->id}}").parentElement.appendChild(node3434);
+                                $('#storeOwnerEmail{{$stos[$i]->id}}').addClass("is-invalid");
+                            }
+                        }else{
+                            if (document.getElementById("if-soemailErr{{$stos[$i]->id}}2")) {
+                                document.getElementById("if-soemailErr{{$stos[$i]->id}}2").remove();
+                                $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                            }
+                        }
+                    },
+                });
             } else {
                 document.getElementById('storeManagerName{{$stos[$i]->id}}').disabled = false;
                 document.getElementById('storeManagerSurname{{$stos[$i]->id}}').disabled = false;
@@ -1292,6 +1447,10 @@
                 $('#storeManagerSurname{{$stos[$i]->id}}').removeClass('bg-soft-dark2');
                 $('#storeManagerEmail{{$stos[$i]->id}}').removeClass('bg-soft-dark2');
                 $('#storeManagerGSM{{$stos[$i]->id}}').removeClass('bg-soft-dark2');
+                if (document.getElementById("if-soemailErr{{$stos[$i]->id}}2")) {
+                    document.getElementById("if-soemailErr{{$stos[$i]->id}}2").remove();
+                    $('#storeOwnerEmail{{$stos[$i]->id}}').removeClass("is-invalid");
+                }
             }
         });
         @endfor

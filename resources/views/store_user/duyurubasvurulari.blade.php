@@ -102,7 +102,7 @@
                                 <td>{{$item->title}}</td>
                                 <td>{{\Carbon\Carbon::createFromTimeString($item->created_at)->format('d/m/Y')}}</td>
                                 <td>
-                                    <a type="button" href="javascript:void(0);" class="btn btn-outline-primary btn-sm mt-2" data-toggle="modal" data-target="#duyuruModal{{$item->id}}">Detay</a>
+                                    <a type="button" href="javascript:void(0);" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#duyuruModal{{$item->id}}">Detay</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -167,7 +167,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form  method="post" enctype="multipart/form-data"
+                        <form id="frmDBas"  method="post" enctype="multipart/form-data"
                                action="/yoneticipaneli/dbasvuruguncelle">
                             @csrf
                             <fieldset>
@@ -222,17 +222,17 @@
                     <div class="alert alert-danger ml-4 mr-4">Son 5 gün içerisinde değerlendirilmiş bir başvurunuz bulunduğu için yenisini ekleyemezsiniz.</div>
                 @else
                     <div class="slimscroll">
-                        <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/dbasvuruekle">
+                        <form id="frmDBas" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/dbasvuruekle">
                             @csrf
                             <fieldset>
                                 <div class="form-group">
                                     <label for="title" class="col-md-12 col-form-label">Başlık</label>
                                     <div class="col-md-12">
-                                        <textarea id="title" class="form-control" rows="2" minlength="20" maxlength="90" required name="title" type="text" placeholder="Başlığınız en az 20 ve en fazla 90 karakter olmalıdır."></textarea>
+                                        <textarea id="title" class="form-control"  rows="2" minlength="20" maxlength="90" required name="title" type="text" placeholder="Başlığınız en az 20 ve en fazla 90 karakter olmalıdır."></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="desc" class="col-md-12 col-form-label">Yazı</label>
+                                    <label for="desc" class="col-md-12 col-form-label">Detay</label>
                                     <div class="col-md-12">
                                         <textarea id="desc" class="form-control" required minlength="300" maxlength="1500" rows="16" name="desc" type="text" placeholder="Detay en az 300 ve en fazla 1500 karakter olmalıdır."></textarea>
                                     </div>
@@ -260,17 +260,17 @@
                 <div class="alert alert-danger ml-4 mr-4">Son 5 gün içerisinde değerlendirilmiş bir başvurunuz bulunduğu için yenisini ekleyemezsiniz.</div>
             @else
                 <div class="slimscroll">
-                    <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/dbasvuruekle">
+                    <form id="frmDBas" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/dbasvuruekle">
                         @csrf
                         <fieldset>
                             <div class="form-group">
                                 <label for="title" class="col-md-12 col-form-label">Başlık</label>
                                 <div class="col-md-12">
-                                    <textarea id="title" class="form-control" rows="2" minlength="20" maxlength="90" required name="title" type="text" placeholder="Başlığınız en az 20 ve en fazla 90 karakter olmalıdır."></textarea>
+                                    <textarea id="title" class="form-control"  rows="2" minlength="20" maxlength="90" required name="title" type="text" placeholder="Başlığınız en az 20 ve en fazla 90 karakter olmalıdır."></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="desc" class="col-md-12 col-form-label">Yazı</label>
+                                <label for="desc" class="col-md-12 col-form-label">Detay</label>
                                 <div class="col-md-12">
                                     <textarea id="desc" class="form-control" required minlength="300" maxlength="1500" rows="16" name="desc" type="text" placeholder="Detay en az 300 ve en fazla 1500 karakter olmalıdır."></textarea>
                                 </div>
@@ -305,6 +305,17 @@
     <script>
         $(document).ready(function () {
             $.fn.dataTable.moment( 'DD/MM/YYYY' );
+        });
+    </script>
+    <script type="text/javascript">
+        $('#frmDBas').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
         });
     </script>
     <script>

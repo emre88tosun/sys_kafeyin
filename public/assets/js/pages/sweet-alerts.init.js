@@ -174,7 +174,7 @@
                                 showConfirmButton: false,
                                 allowOutsideClick: false,
                             });
-                            postToUrl('/adminpanel/yorumsil?yorumID=' + idd2, {yorumID: idd2}, false);
+                            postToUrl('/adminpanel/yorumsil', {yorumID: idd2}, false);
                         }
                     });
                 });
@@ -1272,6 +1272,150 @@
                         }
                     });
                 });
+                $('.sa-yoneticibasvuruapprove').click(function () {
+                    var idd2 = $(this).data('id');
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        html: "Yönetici başvurusunun durumu onaylandı olarak güncellenecektir.\nOnaylıyor musunuz?",
+                        type: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4caf50",
+                        cancelButtonColor: "#f44336",
+                        confirmButtonText: "Onayla",
+                        cancelButtonText: "İptal",
+                        allowOutsideClick: false,
+                    }).then(function (result) {
+                        if (result.value) {
+                            Swal.fire({
+                                type: 'info',
+                                title: "Lütfen bekleyin",
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                            postToUrl('/adminpanel/ybasvuruapprove', {id: idd2}, false);
+                        }
+                    });
+                });
+                $('.sa-yoneticibasvurupending').click(function () {
+                    var idd2 = $(this).data('id');
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        html: "Yönetici başvurusunun durumu inceleniyor olarak güncellenecektir.\nOnaylıyor musunuz?",
+                        type: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4caf50",
+                        cancelButtonColor: "#f44336",
+                        confirmButtonText: "Onayla",
+                        cancelButtonText: "İptal",
+                        allowOutsideClick: false,
+                    }).then(function (result) {
+                        if (result.value) {
+                            Swal.fire({
+                                type: 'info',
+                                title: "Lütfen bekleyin",
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                            postToUrl('/adminpanel/ybasvurupending', {id: idd2}, false);
+                        }
+                    });
+                });
+                $('.sa-yoneticibasvurureject').click(function () {
+                    var idd2 = $(this).data('id');
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        html: "Yönetici başvurusunun durumu reddedildi olarak güncellenecektir.\nOnaylıyor musunuz?",
+                        type: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4caf50",
+                        cancelButtonColor: "#f44336",
+                        confirmButtonText: "Onayla",
+                        cancelButtonText: "İptal",
+                        allowOutsideClick: false,
+                    }).then(function (result) {
+                        if (result.value) {
+                            Swal.fire({
+                                type: 'info',
+                                title: "Lütfen bekleyin",
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                            postToUrl('/adminpanel/ybasvurureject', {id: idd2}, false);
+                        }
+                    });
+                });
+                $('.sa-preregstoreusersil').click(function () {
+                    var idd2 = $(this).data('id');
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        html: "PreRegisteredStoreUser silinecek.\nOnaylıyor musunuz?",
+                        type: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4caf50",
+                        cancelButtonColor: "#f44336",
+                        confirmButtonText: "Onayla",
+                        cancelButtonText: "İptal",
+                        allowOutsideClick: false,
+                    }).then(function (result) {
+                        if (result.value) {
+                            Swal.fire({
+                                type: 'info',
+                                title: "Lütfen bekleyin",
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                            postToUrl('/adminpanel/pusersil', {id: idd2}, false);
+                        }
+                    });
+                });
+                $('.sa-oreferralcodeyenile').click(function () {
+                    var idd2 = $(this).data('id');
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        html: "Referans kodu yenilenecek.\nOnaylıyor musunuz?",
+                        type: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4caf50",
+                        cancelButtonColor: "#f44336",
+                        confirmButtonText: "Onayla",
+                        cancelButtonText: "İptal",
+                        allowOutsideClick: false,
+                    }).then(function (result) {
+                        if (result.value) {
+                            Swal.fire({
+                                type: 'info',
+                                title: "Lütfen bekleyin",
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                            postToUrl('/adminpanel/oreferralcodeyenile', {id: idd2}, false);
+                        }
+                    });
+                });
+                $('.sa-puserdel').click(function () {
+                    var idd2 = $(this).data('id');
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        html: "Ön kullanıcı silinecek.\nOnaylıyor musunuz?",
+                        type: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#4caf50",
+                        cancelButtonColor: "#f44336",
+                        confirmButtonText: "Onayla",
+                        cancelButtonText: "İptal",
+                        allowOutsideClick: false,
+                    }).then(function (result) {
+                        if (result.value) {
+                            Swal.fire({
+                                type: 'info',
+                                title: "Lütfen bekleyin",
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                            postToUrl('/adminpanel/puserdel', {id: idd2}, false);
+                        }
+                    });
+                });
 
                 //sto
 
@@ -1599,9 +1743,10 @@
                 });
 
                 function postToUrl(url, params, newWindow) {
+                    var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                     var form = $('<form>');
                     form.attr('action', url);
-                    form.attr('method', 'GET');
+                    form.attr('method', 'POST');
                     if (newWindow) {
                         form.attr('target', '_blank');
                     }
@@ -1611,7 +1756,7 @@
                         input.attr({
                             'id': paramName,
                             'name': paramName,
-                            'value': paramValue
+                            'value': paramValue,
                         });
                         form.append(input);
                     };
@@ -1629,6 +1774,15 @@
                             addParam(key, params[key]);
                         }
                     }
+
+                    var input2 = $('<input type="hidden">');
+                    input2.attr({
+                        'id': '_token',
+                        'name': '_token',
+                        'value': CSRF_TOKEN,
+                    });
+                    form.append(input2);
+
 
                     // Submit the form, then remove it from the page
                     form.appendTo(document.body);

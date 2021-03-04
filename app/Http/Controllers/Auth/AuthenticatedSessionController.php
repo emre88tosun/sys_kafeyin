@@ -22,6 +22,9 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        if($request->has('redir')){
+            return redirect( $request->redir);
+        }
 
         return redirect(RouteServiceProvider::HOME);
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserLogsTable extends Migration
+class CreateBrandLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateUserLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_logs', function (Blueprint $table) {
+        Schema::create('brand_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('userID');
+            $table->unsignedInteger('brandID');
+            $table->unsignedInteger('userID')->nullable();
             $table->text('desc');
             $table->text('detail');
             $table->timestamps();
@@ -29,6 +30,6 @@ class CreateUserLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_logs');
+        Schema::dropIfExists('brand_logs');
     }
 }

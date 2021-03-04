@@ -26,6 +26,11 @@ class Brand extends Model
         return $this->hasMany(Store::class,'brandID','id');
     }
 
+    public function referral()
+    {
+        return $this->hasOne(OwnershipApplicationReferral::class,'brandID','id');
+    }
+
     public function manager()
     {
         return $this->belongsTo(User::class,'id','brandID');

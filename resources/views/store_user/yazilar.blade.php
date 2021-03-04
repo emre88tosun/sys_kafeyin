@@ -173,7 +173,7 @@
             <div class="alert alert-danger ml-4 mr-4">Maksimum sayıda aktif yazınız olduğu için yeni bir yazı ekleyemezsiniz.</div>
         @else
             <div class="slimscroll">
-                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/yaziekle">
+                <form id="frmYazEkle" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/yaziekle">
                     @csrf
                     <fieldset>
                         <div class="form-group">
@@ -235,7 +235,18 @@
     <script src="{{ URL::asset('assets/libs/datetime-moment/datetime-moment.js') }}"></script>
     <script>
         $(document).ready(function () {
-            $.fn.dataTable.moment( 'DD/MM/YYYY' );
+            $.fn.dataTable.moment( 'DD/MM/YYYY HH:mm' );
+        });
+    </script>
+    <script type="text/javascript">
+        $('#frmYazEkle').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
         });
     </script>
     <script type="text/javascript">

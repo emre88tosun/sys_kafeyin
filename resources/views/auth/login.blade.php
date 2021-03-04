@@ -11,19 +11,24 @@
                                 <div class="col-md-12 p-5">
                                     <div class="mx-auto mb-1">
                                         <a href="/">
-                                            <img src="assets/images/logo.png" alt="logo" height="36" />
+                                            <img src="assets/images/logo.png" alt="logo" height="36"/>
                                         </a>
                                     </div>
                                     <h6 class="h5 mb-0 mt-4">Hoşgeldiniz!</h6>
                                     <p class="text-muted mt-1 mb-4">Devam etmek için lütfen giriş yapınız.</p>
 
-                                    @if(session('error'))<div class="alert alert-danger">{{ session('error') }}</div>
-                                    <br>@endif
-                                    @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>
-                                    <br>@endif
+                                    @if(session('error'))
+                                        <div class="alert alert-danger">{{ session('error') }}</div>
+                                        <br>@endif
+                                    @if(session('success'))
+                                        <div class="alert alert-success">{{ session('success') }}</div>
+                                        <br>@endif
 
-                                    <form action="{{ route('login') }}" method="post" class="authentication-form">
+                                    <form id="frmLogin" action="{{ route('login') }}" method="post" class="authentication-form">
                                         @csrf
+                                        @if(request()->has('redirect'))
+                                            <input type="hidden" name="redir" value="{{request()->redirect}}">
+                                        @endif
 
                                         <div class="form-group">
                                             <label class="form-control-label">E-posta adresi</label>
@@ -34,8 +39,9 @@
                                                 </span>
                                                 </div>
                                                 <input type="email"
-                                                       class="form-control @if($errors->has('email')) is-invalid @endif" id="
-                                                email" name="email" value="{{ old('email')}}" />
+                                                       class="form-control @if($errors->has('email')) is-invalid @endif"
+                                                       id="
+                                                email" name="email" value="{{ old('email')}}"/>
 
                                                 @if($errors->has('email'))
                                                     <span class="invalid-feedback" role="alert">
@@ -45,20 +51,28 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group mt-4">
-                                            <label class="form-control-label">Şifre</label>
+                                        <div class="form-group mt-2">
+                                            <label for="password" class="form-control-label">Şifre</label>
                                             <a href="{{ route('password.request') }}"
-                                               class="float-right text-muted text-unline-dashed ml-1">Şifremi unuttum</a>
+                                               class="float-right text-muted text-unline-dashed ml-1">Şifremi
+                                                unuttum</a>
                                             <div class="input-group input-group-merge">
                                                 <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    <i class="icon-dual" data-feather="lock"></i>
+                                                    <i class="icon-dual m-0" data-feather="lock"></i>
                                                 </span>
                                                 </div>
-                                                <input type="password" class="form-control @if($errors->has('password')) is-invalid @endif" id="password"
-                                                       name="password" />
+                                                <input type="password"
+                                                       class="form-control @if($errors->has('password')) is-invalid @endif"
+                                                       id="password"
+                                                       name="password"/>
+                                                <a href="javascript:void(0);" id="togglePass"
+                                                   style="border-top-left-radius: 0; border-bottom-left-radius: 0;"
+                                                   class="btn btn-light border-0" type="button">
+                                                    <i class="uil uil-eye font-size-16" style="color: #6c757d;" id="eyeIcon" ></i>
+                                                </a>
 
-                                                @if($errors->has('password'))
+                                            @if($errors->has('password'))
                                                     <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('password') }}</strong>
                                             </span>
@@ -70,7 +84,8 @@
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input" id="remember_me"
                                                     {{ old('remember_me') ? 'checked' : '' }} />
-                                                <label class="custom-control-label" for="remember_me">Beni hatırla</label>
+                                                <label class="custom-control-label" for="remember_me">Beni
+                                                    hatırla</label>
                                             </div>
                                         </div>
 
@@ -88,4 +103,5 @@
             </div>
         </div>
     </div>
+
 @endsection

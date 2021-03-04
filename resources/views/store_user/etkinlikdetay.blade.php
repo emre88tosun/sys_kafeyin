@@ -109,7 +109,7 @@
             </div>
 
             <div class="slimscroll">
-                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/etkguncelle">
+                <form id="frmEtkDuzenle" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/etkguncelle">
                     @csrf
                     <fieldset>
                         <input type="hidden" name="actID" value="ETK{{$etkinlik->id}}">
@@ -132,8 +132,8 @@
                                 <input type="file" id="image" name="image" data-max-file-size="1M" data-show-loader="true" data-allowed-formats="square landscape portrait" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                             </div>
                         </div>
-                        <div class="offset-md-0">
-                            <input type="submit" class="btn btn-primary ml-3 mb-5" value="Güncelle">
+                        <div class="col-xl-12">
+                            <input type="submit" class="btn btn-primary mb-5" value="Güncelle">
                         </div>
                     </fieldset>
                 </form>
@@ -152,7 +152,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="/yoneticipaneli/biletekle">
+                    <form id="frmBilEkle" method="post" action="/yoneticipaneli/biletekle">
                         @csrf
                         <fieldset>
                             <input type="hidden" name="id" value="ETK{{$etkinlik->id}}">
@@ -182,7 +182,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="/yoneticipaneli/biletazalt">
+                    <form id="frmBilAzalt" method="post" action="/yoneticipaneli/biletazalt">
                         @csrf
                         <fieldset>
                             <input type="hidden" name="id" value="ETK{{$etkinlik->id}}">
@@ -240,6 +240,33 @@
     <script src="{{ URL::asset('assets/js/pages/sweet-alerts.init.js')}}"></script>
     <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
     <script src="{{ URL::asset('assets/plugins/dropify/js/dropify.min.js') }}"></script>
+    <script type="text/javascript">
+        $('#frmEtkDuzenle').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+        $('#frmBilAzalt').submit(function(e){
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+        $('#frmBilEkle').submit(function(e){
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+    </script>
     <script>
         @if($errors->any())
             swal.fire({

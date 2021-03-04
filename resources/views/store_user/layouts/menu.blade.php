@@ -16,9 +16,6 @@
                     <span class="menu-arrow"></span>
                 </a>
                 <ul class="nav-second-level" aria-expanded="false">
-                    {{--<li>
-                        <a href="/yoneticipaneli/markam/markabilgileri">Marka bilgileri</a>
-                    </li>--}}
                     @if(count($user->brand->stores) > 0)
                         <li>
                             <a href="javascript: void(0);" aria-expanded="false">Mağazalar

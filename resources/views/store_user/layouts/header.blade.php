@@ -19,11 +19,11 @@
         <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
             @if(!is_null($user->magaza) && !is_null($user->brand))
                 <li class="dropdown notification-list" @if(count($user->brand->notifs->where('isSeen',false)->concat($user->magaza->notifs->where('isSeen',false)))>0) data-toggle="tooltip" data-placement="left" title="{{count($user->brand->notifs->where('isSeen',false)->concat($user->magaza->notifs->where('isSeen',false)))}} okunmamış bildirim" @endif >
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
+                    <a class="nav-link dropdown-toggle" id="notifButton" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
                        aria-expanded="false">
                         <i data-feather="bell"></i>
                         @if(count($user->brand->notifs->where('isSeen',false)->concat($user->magaza->notifs->where('isSeen',false)))>0)
-                            <span class="noti-icon-badge"></span>
+                            <span class="noti-icon-badge" id="notiAlert"></span>
                         @endif
 
                     </a>
@@ -31,11 +31,7 @@
                         <div class="dropdown-item noti-title border-bottom">
                             <h5 class="m-0 font-size-16">
                             <span class="float-right">
-                                @if(count($user->brand->notifs->where('isSeen',false)->concat($user->magaza->notifs->where('isSeen',false)))>0)
-                                    <a href="javascript:void(0);"  class="btn-okundu text-primary">
-                                    <i class="uil-check" data-toggle="tooltip" data-placement="left" title="Tümünü okundu olarak işaretle"></i>
-                                    </a>
-                                @endif
+
                             </span>Okunmamış bildirimler
                             </h5>
                         </div>
@@ -77,11 +73,11 @@
 
             @elseif(!is_null($user->magaza) && is_null($user->brand))
                 <li class="dropdown notification-list" @if(count($user->magaza->notifs->where('isSeen',false))>0) data-toggle="tooltip" data-placement="left" title="{{count($user->magaza->notifs->where('isSeen',false))}} okunmamış bildirim" @endif >
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
+                    <a class="nav-link dropdown-toggle" id="notifButton" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
                        aria-expanded="false">
                         <i data-feather="bell"></i>
                         @if(count($user->magaza->notifs->where('isSeen',false))>0)
-                            <span class="noti-icon-badge"></span>
+                            <span class="noti-icon-badge"  id="notiAlert"></span>
                         @endif
 
                     </a>
@@ -89,11 +85,7 @@
                         <div class="dropdown-item noti-title border-bottom">
                             <h5 class="m-0 font-size-16">
                             <span class="float-right">
-                                @if(count($user->magaza->notifs->where('isSeen',false))>0)
-                                    <a href="javascript:void(0);"  class="btn-okundu text-primary">
-                                    <i class="uil-check" data-toggle="tooltip" data-placement="left" title="Tümünü okundu olarak işaretle"></i>
-                                    </a>
-                                @endif
+
                             </span>Okunmamış bildirimler
                             </h5>
                         </div>
@@ -134,11 +126,11 @@
                 </li>
             @elseif(is_null($user->magaza) && !is_null($user->brand))
                 <li class="dropdown notification-list" @if(count($user->brand->notifs->where('isSeen',false))>0) data-toggle="tooltip" data-placement="left" title="{{count($user->brand->notifs->where('isSeen',false))}} okunmamış bildirim" @endif >
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
+                    <a class="nav-link dropdown-toggle" id="notifButton" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
                        aria-expanded="false">
                         <i data-feather="bell"></i>
                         @if(count($user->brand->notifs->where('isSeen',false))>0)
-                            <span class="noti-icon-badge"></span>
+                            <span class="noti-icon-badge"  id="notiAlert"></span>
                         @endif
 
                     </a>
@@ -146,11 +138,7 @@
                         <div class="dropdown-item noti-title border-bottom">
                             <h5 class="m-0 font-size-16">
                             <span class="float-right">
-                                @if(count($user->brand->notifs->where('isSeen',false))>0)
-                                    <a href="javascript:void(0);"  class="btn-okundu text-primary">
-                                    <i class="uil-check" data-toggle="tooltip" data-placement="left" title="Tümünü okundu olarak işaretle"></i>
-                                    </a>
-                                @endif
+
                             </span>Okunmamış bildirimler
                             </h5>
                         </div>
@@ -210,12 +198,22 @@
                             </h6>
                         </div>
                         <span data-feather="chevron-down" class="ml-2 align-self-center"></span>
+                        @if(count(\App\Models\SupportTicket::where('userID',$user->id)->where('isAnswered',true)->where('isAnswerSeen',false)->get()))
+                            <span class="noti-icon-badge3"></span>
+                        @endif
                     </div>
                 </a>
                 <div class="dropdown-menu profile-dropdown-items dropdown-menu-right">
                     <a href="/yoneticipaneli/hesabim" class="dropdown-item notify-item">
                         <i data-feather="user" class="icon-dual icon-xs mr-2"></i>
                         <span class="text-muted">Hesabım</span>
+                    </a>
+                    <a href="/yoneticipaneli/destek" class="dropdown-item notify-item">
+                        <i data-feather="flag" class="icon-dual icon-xs mr-2"></i>
+                        <span class="text-muted">Destek</span>
+                        @if(count(\App\Models\SupportTicket::where('userID',$user->id)->where('isAnswered',true)->where('isAnswerSeen',false)->get()))
+                            <span class="noti-icon-badge2"></span>
+                        @endif
                     </a>
                     <div class="dropdown-divider"></div>
                     <form method="POST" action="{{ route('logout') }}">
@@ -237,5 +235,6 @@
             </li>
         </ul>
     </div>
+
 </div>
 

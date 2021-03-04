@@ -179,7 +179,7 @@
             <div class="alert alert-danger ml-4 mr-4">Maksimum sayıda aktif etkinliğiniz olduğu için yeni bir yazı ekleyemezsiniz.</div>
         @else
             <div class="slimscroll">
-                <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/etkekle">
+                <form id="frmEtkEkle" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/etkekle">
                     @csrf
                     <fieldset>
                         <div class="form-group">
@@ -286,6 +286,17 @@
     <script>
         $(document).ready(function () {
             $.fn.dataTable.moment( 'DD/MM/YYYY' );
+        });
+    </script>
+    <script type="text/javascript">
+        $('#frmEtkEkle').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
         });
     </script>
     <script>

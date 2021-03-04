@@ -5,6 +5,7 @@
     <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{ URL::asset('assets/plugins/dropify/css/dropify.min.css') }}" rel="stylesheet"/>
     <link href="{{ URL::asset('assets/libs/select2/select2.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ URL::asset('assets/libs/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css"/>
 @endsection
 
 @section('breadcrumb')
@@ -43,9 +44,6 @@
                                        data-target="#gsmChange"
                                        class="dropdown-item">GSM güncelle</a>
                                     <a href="javascript:void(0);" type="button" data-toggle="modal"
-                                       data-target="#addressChange"
-                                       class="dropdown-item">Adres güncelle</a>
-                                    <a href="javascript:void(0);" type="button" data-toggle="modal"
                                        data-target="#passChange"
                                        class="dropdown-item">Şifre güncelle</a>
 
@@ -53,29 +51,42 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-center mt-3">
+                    <div class="text-center mt-0">
                         <div class="popup-gallery" data-source="{{$user->avatar}}">
                             <a href="{{$user->avatar}}" title="">
-                                <img src="{{$user->avatar}}" alt="img" class="avatar-lg rounded-circle">
+                                <img src="{{$user->avatar}}" alt="img" class="avatar-xxl rounded-circle">
                             </a>
                         </div>
-                        <h5 class="mt-2 mb-0">{{$user->name}} {{$user->surname}}</h5>
-                        @if($hasBrand && $hasMagaza)
-                            <h6 class="text-muted font-weight-normal mt-2 mb-0">Marka & Mağaza Yöneticisi</h6>
-                        @elseif(!$hasBrand && $hasMagaza)
-                            <h6 class="text-muted font-weight-normal mt-2 mb-0">Mağaza Yöneticisi</h6>
-                        @elseif($hasBrand && !$hasMagaza)
-                            <h6 class="text-muted font-weight-normal mt-2 mb-0">Marka Yöneticisi</h6>
-                        @endif
-                        @if($user->addresses->first())
-                            <h6 class="text-muted font-weight-normal mt-1 mb-4">{{$user->addresses->first()->city->name}}</h6>
-                        @endif
                     </div>
-                    <div class="mt-3 pt-2 border-top">
-                        <h4 class="mb-3 font-size-15">İletişim Bilgileri <a href="javascript:void(0);" data-toggle="modal" data-target="#contactInfoDialog" class="card-title header-title border-bottom mb-0 mt-0"><i class="uil-info-circle"></i></a></h4>
+                    <div class="mt-3 pt-2">
+                        <h4 class="mb-3 font-size-15">Bilgiler <a href="javascript:void(0);" data-toggle="modal" data-target="#contactInfoDialog" class="card-title header-title border-bottom mb-0 mt-0"><i class="uil-info-circle"></i></a></h4>
                         <div class="table-responsive">
                             <table class="table table-borderless m-0 text-muted">
                                 <tbody>
+                                <tr>
+                                    <th scope="row">Ad</th>
+                                    <td>{{$user->name}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Soyad</th>
+                                    <td>{{$user->surname}}</td>
+                                </tr>
+                                @if($hasBrand && $hasMagaza)
+                                    <tr>
+                                        <th scope="row">Yetki</th>
+                                        <td>Marka & Mağaza Yöneticisi</td>
+                                    </tr>
+                                @elseif(!$hasBrand && $hasMagaza)
+                                    <tr>
+                                        <th scope="row">Yetki</th>
+                                        <td>Mağaza Yöneticisi</td>
+                                    </tr>
+                                @elseif($hasBrand && !$hasMagaza)
+                                    <tr>
+                                        <th scope="row">Yetki</th>
+                                        <td>Marka Yöneticisi</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <th scope="row">E-posta</th>
                                     <td>{{$user->email}}</td>
@@ -84,14 +95,7 @@
                                     <th scope="row">GSM</th>
                                     <td>+90{{$user->gsmNumber}}</td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Adres</th>
-                                    @if($user->addresses->first())
-                                    <td>{{$user->addresses->first()->neighborhood->name}}. {{$user->addresses->first()->avenueStreet}} No: {{$user->addresses->first()->buildingApartmentNo}} {{$user->addresses->first()->district->name}} {{$user->addresses->first()->county->name}}/{{$user->addresses->first()->city->name}} </td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -107,40 +111,109 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="log-tab" data-toggle="pill" href="#log"
                                role="tab" aria-controls="pills-activity" aria-selected="true">
-                                Hesap hareketleriniz
+                                Hesap hareketleri
                             </a>
                         </li>
+                        @if($hasMagaza)
+                            <li class="nav-item">
+                                <a class="nav-link" id="store-tab" data-toggle="pill" href="#store"
+                                   role="tab" aria-controls="pills-activity" aria-selected="false">
+                                    Mağaza işlemleri
+                                </a>
+                            </li>
+                        @endif
+                        @if($hasBrand)
+                            <li class="nav-item">
+                                <a class="nav-link" id="brand-tab" data-toggle="pill" href="#brand"
+                                   role="tab" aria-controls="pills-activity" aria-selected="false">
+                                    Marka işlemleri
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane fade show active" id="log" role="tabpanel" aria-labelledby="log-tab">
-                            <h5 class="mt-3">Son 1 ay</h5>
-                            @if(count($logs))
-                                <div class="left-timeline mt-3 mb-3 pl-4">
-                                    <ul class="list-unstyled events mb-0">
-                                        @foreach($logs as $log)
-                                            <li class="event-list">
-                                                <div class="pb-4">
-                                                    <div class="media">
-                                                        <div class="event-date text-center mr-4">
-                                                            <div class="bg-soft-primary-light p-1 rounded text-primary font-size-14">{{\Carbon\Carbon::createFromTimeString($log->created_at)->format('d/m/Y H:i')}}</div>
-                                                        </div>
-                                                        <div class="media-body">
-                                                            <h6 class="font-size-15 mt-0 mb-1">{{$log->desc}}</h6>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        @endforeach
-
-                                    </ul>
-                                </div>
-                            @else
-                                <p>Burası tertemiz!</p>
-                            @endif
+                            <table id="tblUserLogs" class="table table-hover dt-responsive" cellspacing="0" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Detay</th>
+                                    <th>IP</th>
+                                    <th>İşlem Tarihi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($logs as $log)
+                                    <tr>
+                                        <td>{{$log->desc}}</td>
+                                        @if(json_decode($log->detail,true)['ip']??false)
+                                            <td>{{json_decode($log->detail,true)['ip']}}</td>
+                                        @else
+                                            <td>Sistem</td>
+                                        @endif
+                                        <td>{{\Carbon\Carbon::createFromTimeString($log->created_at)->format('d/m/Y H:i')}}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
 
 
                         </div>
+                        @if($hasMagaza)
+                            <div class="tab-pane fade" id="store" role="tabpanel" aria-labelledby="store-tab">
+                                <table id="tblStoreLogs" class="table table-hover dt-responsive" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Detay</th>
+                                        <th>IP</th>
+                                        <th>İşlem Tarihi</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($storeLogs as $log)
+                                        <tr>
+                                            <td>{{$log->desc}}</td>
+                                            @if(json_decode($log->detail,true)['ip']??false)
+                                                <td>{{json_decode($log->detail,true)['ip']}}</td>
+                                            @else
+                                                <td>Sistem</td>
+                                            @endif
+                                            <td>{{\Carbon\Carbon::createFromTimeString($log->created_at)->format('d/m/Y H:i')}}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
 
+
+                            </div>
+                        @endif
+                        @if($hasBrand)
+                            <div class="tab-pane fade" id="brand" role="tabpanel" aria-labelledby="brand-tab">
+                                <table id="tblBrandLogs" class="table table-hover dt-responsive" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Detay</th>
+                                        <th>IP</th>
+                                        <th>İşlem Tarihi</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($brandLogs as $log)
+                                        <tr>
+                                            <td>{{$log->desc}}</td>
+                                            @if(json_decode($log->detail,true)['ip']??false)
+                                                <td>{{json_decode($log->detail,true)['ip']}}</td>
+                                            @else
+                                                <td>Sistem</td>
+                                            @endif
+                                            <td>{{\Carbon\Carbon::createFromTimeString($log->created_at)->format('d/m/Y H:i')}}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        @endif
                     </div>
 
                 </div>
@@ -161,16 +234,16 @@
                     <div class="col-xl-12">
                         @if($hasBrand)
                             @if(count($user->brand->stores) > 1)
-                                <p>Mağaza Yöneticileriniz ile sadece e-posta adresi bilginiz paylaşılmaktadır. Bunun yanı sıra hiçbir iletişim bilginiz, hiçbir kullanıcı ile paylaşılmamaktadır.</p>
+                                <p>Bilgileriniz, sadece markanıza bağlı mağazaların yöneticileri ile paylaşılmaktadır.</p>
                             @else
                                 @if($hasMagaza)
-                                    <p>İletişim bilgileriniz hiçbir kullanıcı ile paylaşılmamaktadır.</p>
+                                    <p>Bilgileriniz hiçbir kullanıcı ile paylaşılmamaktadır.</p>
                                 @else
-                                    <p>Mağaza Yöneticiniz ile sadece e-posta adresi bilginiz paylaşılmaktadır. Bunun yanı sıra hiçbir iletişim bilginiz, hiçbir kullanıcı ile paylaşılmamaktadır.</p>
+                                    <p>Bilgileriniz, sadece mağaza yöneticiniz ile paylaşılmaktadır.</p>
                                 @endif
                             @endif
                         @else
-                            <p>Marka Yöneticiniz ile sadece e-posta adresi bilginiz paylaşılmaktadır. Bunun yanı sıra hiçbir iletişim bilginiz, hiçbir kullanıcı ile paylaşılmamaktadır.</p>
+                            <p>Bilgileriniz, sadece marka yöneticiniz ile paylaşılmaktadır.</p>
                         @endif
                     </div>
                 </div>
@@ -230,17 +303,22 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="newpass" class="col-md-4 col-form-label">Yeni şifre</label>
+                                <label for="password" class="col-md-4 col-form-label">Yeni şifre</label>
                                 <div class="col-md-8">
-                                    <input type="password" name="newpass" required class="form-control" id="newpass"
+                                    <input type="password" name="password" required class="form-control" id="password"
                                            placeholder="Yeni şifre">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="newpassconfirm" class="col-md-4 col-form-label">Yeni şifre doğrulama</label>
+                                <label for="password_confirmation" class="col-md-4 col-form-label">Yeni şifre doğrulama</label>
                                 <div class="col-md-8">
-                                    <input type="password" name="newpassconfirm" required class="form-control" id="newpassconfirm"
+                                    <input type="password" name="password_confirmation" required class="form-control" id="password_confirmation"
                                            placeholder="Yeni şifre doğrulama">
+                                </div>
+                            </div>
+                            <div class="offset-md-4">
+                                <div class="alert bg-soft-primary-light w-100 ml-2">
+                                    <p class="m-0 text-primary font-weight-bold small">*Şifreniz en az 8 karakterden oluşmalı.<br>*En az 1 adet küçük harf (a-z), en az 1 adet büyük harf (A-Z), en az 1 adet rakam (0-9) içermelidir.</p>
                                 </div>
                             </div>
 
@@ -284,110 +362,6 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="addressChange" tabindex="-1" role="dialog"
-         aria-labelledby="addressChange" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addressChange">Adres Güncelle</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="/yoneticipaneli/addresschange">
-                        @csrf
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <div class="form-group row">
-                                        <label for="city" class="col-md-3 col-form-label">İl</label>
-                                        <div class="col-md-9">
-                                            <select data-plugin="citySelect" required class="form-control"  name="cityID" >
-                                                <option></option>
-                                                @foreach($aCities as $city)
-                                                    <option value="{{$city->id}}" >{{$city->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <div class="form-group row">
-                                        <label for="county" class="col-md-3 col-form-label">İlçe</label>
-                                        <div class="col-md-9">
-                                            <select data-plugin="countySelect" required class="countySelect form-control"  name="countyID" >
-                                                <option></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <div class="form-group row">
-                                        <label for="district" class="col-md-3 col-form-label">Semt</label>
-                                        <div class="col-md-9">
-                                            <select data-plugin="districtSelect" required class="districtSelect form-control"  name="districtID" >
-                                                <option></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <div class="form-group row">
-                                        <label for="neighborhood" class="col-md-3 col-form-label">Mahalle</label>
-                                        <div class="col-md-9">
-                                            <select data-plugin="neighborhoodSelect" required class="neighborhoodSelect form-control"  name="neighborhoodID" >
-                                                <option></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="form-group row">
-                                        <label for="avenueStreet" class="col-md-2 col-form-label">Cadde / Sokak</label>
-                                        <div class="col-md-10">
-                                            <input type="text" name="avenueStreet" required class="form-control" id="avenueStreet"
-                                                   placeholder="Cadde / Sokak">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <div class="form-group row">
-                                        <label for="buildingNo" class="col-md-3 col-form-label">Apt. No</label>
-                                        <div class="col-md-9">
-                                            <input type="number" name="buildingNo" required class="form-control" id="buildingNo"
-                                                   placeholder="Apt. No">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <div class="form-group row">
-                                        <label for="apartmentNo" class="col-md-3 col-form-label">Daire No</label>
-                                        <div class="col-md-9">
-                                            <input type="number" name="apartmentNo" required class="form-control" id="apartmentNo"
-                                                   placeholder="Daire No">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <div class="offset-md-1">
-                                <input type="submit" class="btn btn-primary float-right" value="Devam">
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('script')
@@ -396,16 +370,33 @@
     <script src="{{ URL::asset('assets/js/pages/sweet-alerts.init.js')}}"></script>
     <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js')}}"></script>
     <script src="{{ URL::asset('assets/plugins/dropify/js/dropify.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/libs/datatables/datatables.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/pages/dropify.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/inputmask/jquery.inputmask.bundle.min.js') }}"></script>
     <script src="{{ URL::asset('assets/libs/select2/select2.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/libs/moment/moment.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/libs/datetime-moment/datetime-moment.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $.fn.dataTable.moment( 'DD/MM/YYYY HH:mm');
+        });
+    </script>
     <script>
         @if($errors->any())
+            @if($errors->first('hata'))
             swal.fire({
                 title: 'Hata!',
                 text: "{{$errors->first('hata')}}",
                 type: "error",
             });
+            @else
+            swal.fire({
+                title: 'Hata!',
+                html: "@foreach($errors->all() as $err) {{$err}} <br> @endforeach",
+                type: "error",
+            });
+            @endif
+
         @elseif(session('ppUp'))
             swal.fire({
                 title: 'Başarılı!',
@@ -525,4 +516,5 @@
 
 @section('script-bottom')
     <script src="{{ URL::asset('assets/js/pages/inputmask.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/pages/datatables.init.js') }}"></script>
 @endsection

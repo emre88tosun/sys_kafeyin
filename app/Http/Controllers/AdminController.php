@@ -39,6 +39,7 @@ use App\Models\MenuItemViewLog;
 use App\Models\OwnershipApplication;
 use App\Models\OwnershipApplicationReferral;
 use App\Models\PopularStore;
+use App\Models\PreRegisteredStoreUser;
 use App\Models\ProfileViewLog;
 use App\Models\Store;
 use App\Models\StoreComment;
@@ -56,6 +57,7 @@ use App\Models\UserLog;
 use App\Models\UsersBadge;
 use App\Models\UserSurvey;
 use App\Models\UserSurveyAnswer;
+use App\Notifications\BrandManagerInfoEmailWithButton;
 use App\Notifications\KafeyinBaseEmail;
 use App\Notifications\KafeyinBaseEmail2;
 use Carbon\Carbon;
@@ -2617,6 +2619,17 @@ class AdminController extends Controller
         }
     }
 
+    public function yoneticibasvurualt(Request  $request)
+    {
+        $id = $request->id;
+        $application = OwnershipApplication::where('id',$id)->first();
+        $detail = json_decode($application->detail,true);
+        return view('admin.yoneticibasvurudetay')->with([
+            'application'=>$application,
+            'detail'=>$detail
+        ]);
+    }
+
     public function basvuruguncellemeiste(Request $request)
     {
         $applicationID = $request->duyuruBasID;
@@ -2986,6 +2999,326 @@ class AdminController extends Controller
         KafeyinStringSetting::where('id',$id)->first()->delete();
         return redirect()->back()->with([
             'setDel'=>true
+        ]);
+    }
+
+    public function preregisteredstoreuserolustur(Request  $request)
+    {
+        $isBrandManager = $request->brandID ? true : false;
+        $isStoreManager = $request->storeID ? true : false;
+        $brandID = $request->brandID ?? null;
+        $storeID = $request->storeID ?? null;
+        $name = $request->name;
+        $surname = $request->surname;
+        $email = $request->email;
+        $gsmNumber = $request->gsmNumber;
+        $applicationID = $request->applicationID;
+        $referralCode = strtoupper(Str::random(36));
+
+        if(!$isBrandManager && !$isStoreManager){
+            return redirect()->back()->withErrors([
+                'hata'=>"Oluşturulacak kullanıcı marka veya mağaza yöneticisi değil."
+            ]);
+        }
+
+        if(User::where('email',$email)->exists()){
+            return redirect()->back()->withErrors([
+                'hata'=>"Bu e-posta adresi ile kayıtlı kullanıcı bulunuyor."
+            ]);
+        }
+
+        if(PreRegisteredStoreUser::where('email',$email)->exists()){
+            return redirect()->back()->withErrors([
+                'hata'=>"Bu e-posta adresi ile kayıtlı ön kullanıcı bulunuyor."
+            ]);
+        }
+
+        $data = [
+            "isBrandManager"=>$isBrandManager,
+            "isStoreManager"=>$isStoreManager,
+            "brandID"=>$brandID,
+            "storeID"=>$storeID,
+            "name"=>$name,
+            "surname"=>$surname,
+            "email"=>$email,
+            "gsmNumber"=>$gsmNumber,
+            "applicationID"=>$applicationID,
+            "referralCode"=>$referralCode,
+        ];
+
+        $created = PreRegisteredStoreUser::create($data);
+
+        $user = new User;
+        $user->email = $email;
+        $user->name = $name;
+        $user->surname = $surname;
+        $bodyText1 = "";
+
+        if($isBrandManager && $isStoreManager){
+            //hem marka hem mağaza
+            $bodyText1 = "Yönetici hesabınızı oluşturduğunuzda ".$created->marka->name." (ID:MRK88".$created->marka->id.") markasının ve ".$created->magaza->name." (ID:KFYN".$created->magaza->id.") mağazasının yönetim paneline ulaşabilirsiniz.";
+        }
+        if(!$isBrandManager && $isStoreManager){
+            //sadece mağaza
+            $bodyText1 = "Yönetici hesabınızı oluşturduğunuzda ".$created->magaza->name." (ID:KFYN".$created->magaza->id.") mağazasının yönetim paneline ulaşabilirsiniz.";
+        }
+        if($isBrandManager && !$isStoreManager){
+            //sadece marka
+            $bodyText1 = "Yönetici hesabınızı oluşturduğunuzda ".$created->marka->name." (ID:MRK88".$created->marka->id.") markasının yönetim paneline ulaşabilirsiniz.";
+        }
+
+        $emailData = [
+            'user'=>$user,
+            'subject'=>"Yönetici hesabınızı oluşturabilirsiniz!",
+            'buttonName'=>"Yönetici hesabı oluştur",
+            'buttonUrl'=>url("/yoneticihesabiolustur?referral=".$created->referralCode),
+            'bodyText1'=>$bodyText1,
+            'bodyText2'=>"Sorularınız veya karşılaştığınız sorunlar için destek@kafeyinapp.com e-posta adresi üzerinden bizimle iletişime geçebilirsiniz."
+        ];
+
+        $user->notify(new BrandManagerInfoEmailWithButton($emailData));
+
+        if($isBrandManager){
+            $application1 = OwnershipApplication::where('id',$applicationID)->first();
+            $detail1 = $application1->detail;
+            $jsonDetail1 = json_decode($detail1,true);
+            $jsonDetail1['brandManagerEmailSent'] = "true";
+            OwnershipApplication::where('id',$applicationID)->first()->update([
+                'detail'=>$jsonDetail1
+            ]);
+        }
+        if($isStoreManager){
+            $application12 = OwnershipApplication::where('id',$applicationID)->first();
+            $detail12 = $application12->detail;
+            $jsonDetail12 = json_decode($detail12,true);
+            $jsonDetail12['storeManagerEmailSent'.$storeID] = "true";
+            OwnershipApplication::where('id',$applicationID)->first()->update([
+                'detail'=>$jsonDetail12
+            ]);
+        }
+
+        return redirect()->back()->with([
+            'emailSent'=>true
+        ]);
+    }
+
+    public function ilkbasvuruduzenle(Request  $request)
+    {
+        $id = $request->applicationID;
+        $detail = $request->detail;
+        $cleanDetail = str_replace(" ","",$detail);
+        $position = strripos($cleanDetail,",");
+        $cleanDetail2 = substr($cleanDetail, 0, $position) . substr($cleanDetail, $position + 1);
+
+        OwnershipApplication::where('id',$id)->first()->update([
+            'detail'=>$cleanDetail2,
+        ]);
+        return redirect()->back()->with([
+            'basUpup'=>true
+        ]);
+    }
+
+    public function ybasvuruapprove(Request $request)
+    {
+        $id = $request->id;
+        $application = OwnershipApplication::where('id',$id)->first();
+        $detail = $application->detail;
+        $jsonDetail = json_decode($detail,true);
+        unset($jsonDetail['status']);
+        $jsonDetail['status'] = "approved";
+        OwnershipApplication::where('id',$id)->first()->update([
+            'detail'=>$jsonDetail
+        ]);
+        return redirect()->back()->with([
+            'statUp'=>true
+        ]);
+    }
+
+    public function pusersil(Request  $request)
+    {
+
+        PreRegisteredStoreUser::where('id',$request->id)->first()->delete();
+
+        return redirect()->back()->with([
+            'puserdel'=>true
+        ]);
+    }
+
+    public function ybasvurupending(Request $request)
+    {
+        $id = $request->id;
+        $application = OwnershipApplication::where('id',$id)->first();
+        $detail = $application->detail;
+        $jsonDetail = json_decode($detail,true);
+        unset($jsonDetail['status']);
+        $jsonDetail['status'] = "need_approval";
+        OwnershipApplication::where('id',$id)->first()->update([
+            'detail'=>$jsonDetail
+        ]);
+        return redirect()->back()->with([
+            'statUp'=>true
+        ]);
+    }
+
+    public function ownershipapplicationreferrals()
+    {
+        $referrals = OwnershipApplicationReferral::all();
+        $brands = Brand::where(function ($query){
+            return $query->doesntHave('referral');
+        })->get();
+
+        return view('admin.ownershipapplicationreferrals')->with([
+            'referrals'=>$referrals,
+            'brands'=>$brands,
+        ]);
+    }
+
+    public function referralekle(Request $request)
+    {
+        $id = $request->brandID;
+
+        $data = [
+            'brandID'=>$id,
+            'referralCode'=>strtoupper(Str::random(48))
+        ];
+
+        OwnershipApplicationReferral::create($data);
+
+        return redirect()->back()->with([
+            'referralAdd'=>true
+        ]);
+    }
+
+    public function preregisteredstoreusers()
+    {
+        $pUsers = PreRegisteredStoreUser::all();
+
+        return view('admin.preregisteredstoreusers')->with([
+            'pusers'=>$pUsers
+        ]);
+    }
+
+    public function puserekle(Request $request)
+    {
+        if(PreRegisteredStoreUser::where('email',$request->email)->exists()){
+            return redirect()->back()->withErrors([
+                'hata'=>"Bu e-posta adresi ile kayıtlı ön kullanıcı bulunuyor."
+            ]);
+        }
+        if(User::where('email',$request->email)->exists()){
+            return redirect()->back()->withErrors([
+                'hata'=>"Bu e-posta adresi ile kayıtlı kullanıcı bulunuyor."
+            ]);
+        }
+
+        $isBrandManager = $request->brandID ? true : false;
+        $isStoreManager = $request->storeID ? true : false;
+        $brandID = $request->brandID ?? null;
+        $storeID = $request->storeID ?? null;
+        $name = $request->name;
+        $surname = $request->surname;
+        $email = $request->email;
+        $gsmNumber = $request->gsmNumber;
+        $referralCode = strtoupper(Str::random(36));
+
+        $data = [
+            "isBrandManager"=>$isBrandManager,
+            "isStoreManager"=>$isStoreManager,
+            "brandID"=>$brandID,
+            "storeID"=>$storeID,
+            "name"=>$name,
+            "surname"=>$surname,
+            "email"=>$email,
+            "gsmNumber"=>$gsmNumber,
+            "referralCode"=>$referralCode,
+            "applicationID"=>null,
+        ];
+
+        $created = PreRegisteredStoreUser::create($data);
+
+        $user = new User;
+        $user->email = $email;
+        $user->name = $name;
+        $user->surname = $surname;
+        $bodyText1 = "";
+
+        if($isBrandManager && $isStoreManager){
+            //hem marka hem mağaza
+            $bodyText1 = "Yönetici hesabınızı oluşturduğunuzda ".$created->marka->name." (ID:MRK88".$created->marka->id.") markasının ve ".$created->magaza->name." (ID:KFYN".$created->magaza->id.") mağazasının yönetim paneline ulaşabilirsiniz.";
+        }
+        if(!$isBrandManager && $isStoreManager){
+            //sadece mağaza
+            $bodyText1 = "Yönetici hesabınızı oluşturduğunuzda ".$created->magaza->name." (ID:KFYN".$created->magaza->id.") mağazasının yönetim paneline ulaşabilirsiniz.";
+        }
+        if($isBrandManager && !$isStoreManager){
+            //sadece marka
+            $bodyText1 = "Yönetici hesabınızı oluşturduğunuzda ".$created->marka->name." (ID:MRK88".$created->marka->id.") markasının yönetim paneline ulaşabilirsiniz.";
+        }
+
+        $emailData = [
+            'user'=>$user,
+            'subject'=>"Yönetici hesabınızı oluşturabilirsiniz!",
+            'buttonName'=>"Yönetici hesabı oluştur",
+            'buttonUrl'=>url("/yoneticihesabiolustur?referral=".$created->referralCode),
+            'bodyText1'=>$bodyText1,
+            'bodyText2'=>"Sorularınız veya karşılaştığınız sorunlar için destek@kafeyinapp.com e-posta adresi üzerinden bizimle iletişime geçebilirsiniz."
+        ];
+
+        $user->notify(new BrandManagerInfoEmailWithButton($emailData));
+
+        return redirect()->back()->with([
+            'emailSent'=>true
+        ]);
+    }
+
+    public function puserdel(Request $request)
+    {
+        PreRegisteredStoreUser::where('id',$request->id)->first()->delete();
+        return redirect()->back()->with([
+            'puserdel'=>true
+        ]);
+    }
+
+    public function oreferralduzenle(Request $request)
+    {
+        $id = $request->referralID;
+
+        OwnershipApplicationReferral::where('id',$id)->first()->update([
+            'isUsed'=>$request->isUsed,
+            'isValid'=>$request->isValid,
+        ]);
+
+        return redirect()->back()->with([
+            'referralup'=>true
+        ]);
+    }
+
+    public function oreferralcodeyenile(Request $request)
+    {
+        $id = $request->id;
+
+        OwnershipApplicationReferral::where('id',$id)->first()->update([
+            'referralCode'=>strtoupper(Str::random(48))
+        ]);
+
+        return redirect()->back()->with([
+            'referralcodeup'=>true
+        ]);
+    }
+
+    public function ybasvurureject(Request $request)
+    {
+        $id = $request->id;
+        $application = OwnershipApplication::where('id',$id)->first();
+        $detail = $application->detail;
+        $jsonDetail = json_decode($detail,true);
+        unset($jsonDetail['status']);
+        $jsonDetail['status'] = "rejected";
+        OwnershipApplication::where('id',$id)->first()->update([
+            'detail'=>$jsonDetail
+        ]);
+        return redirect()->back()->with([
+            'statUp'=>true
         ]);
     }
 

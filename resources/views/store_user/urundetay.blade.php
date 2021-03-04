@@ -40,7 +40,7 @@
                             </div>
                         </div>
                         <div class="col-md-8">
-                            <h5 class="mt-0 mb-1">{{$urun->title}}</h5>
+                            <h5 class="mt-0 mb-1">{{$urun->title}} (ID:URN{{$urun->id}})</h5>
                             <h6 class="mt-0 mb-0 font-weight-bold text-primary">{{$urun->subcategory->desc}}</h6>
                             <h6 class="text-primary font-weight-bold mt-2 mb-1">
                                 @if($urun->tag1 == "1")

@@ -31,8 +31,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Marka</th>
-                            <th>Ad Soyad</th>
-                            <th>E-posta</th>
+                            <th>Durum</th>
                             <th>Oluşturulma Tarihi</th>
                             <th></th>
                         </tr>
@@ -42,8 +41,13 @@
                             <tr>
                                 <th scope="row">{{$application->id}}</th>
                                 <td><a class="text-muted" href="/adminpanel/markalar/{{$application->brand->id}}">#{{$application->brand->id}} - {{$application->brand->name}}</a></td>
-                                <td>{{$application->nameSurname}}</td>
-                                <td>{{$application->email}}</td>
+                                @if(json_decode($application->detail,true)['status'] == "approved")
+                                    <td><text class="text-success">Onaylandı</text></td>
+                                @elseif(json_decode($application->detail,true)['status'] == "need_approval")
+                                    <td><text class="text-primary">Onay bekliyor</text></td>
+                                @else
+                                    <td>{{json_decode($application->detail,true)['status']}}</td>
+                                @endif
                                 <td>{{\Carbon\Carbon::createFromTimeString($application->created_at)->format('d/m/Y H:i')}}</td>
                                 <td>
                                     <div class="btn-group">
@@ -56,13 +60,7 @@
                                                     data-feather="chevron-down"></span></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="javascript:void(0);" type="button" data-toggle="modal"
-                                               data-target="#descModal{{$application->id}}"
-                                               class="dropdown-item">Detay</a>
-                                            <a href="javascript:void(0);" type="button" data-id="{{$application->id}}"
-                                               class="dropdown-item text-primary sa-yBasvuruSil1">Kodu güncelle ve sil</a>
-                                            <a href="javascript:void(0);" type="button" data-id="{{$application->id}}"
-                                               class="dropdown-item text-danger sa-yBasvuruSil2">Kod ile beraber sil</a>
+                                            <a href="/adminpanel/basvurular/yonetici/{{$application->id}}" type="button" class="dropdown-item">Detay</a>
 
                                         </div>
                                     </div>
@@ -74,29 +72,6 @@
                     </table>
                 </div>
             </div>
-
-            @foreach($applications as $basvuru)
-                <div class="modal fade" id="descModal{{$basvuru->id}}" tabindex="-1" role="dialog"
-                     aria-labelledby="descModal{{$basvuru->id}}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="descModal{{$basvuru->id}}">Başvuru detay</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <h6 class="mb-3">Marka: {{$basvuru->brand->name}}</h6>
-                                <p>Ad-soyad: {{$basvuru->nameSurname}}</p>
-                                <p>E-posta: {{$basvuru->email}}</p>
-                                <p>Şifre: {{$basvuru->password}}</p>
-                                <p>Referans: #{{$basvuru->ref->id}} - {{$basvuru->ref->referralCode}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
         </div>
         <div class="col-xl-2">
             <div class="card">

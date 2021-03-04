@@ -132,8 +132,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title font-size-16 mb-4">Alt kategoriler</h5>
-                    @if(count($kategori1->subcategories))
-                        @foreach($kategori1->subcategories as $subCat)
+                    @if(count($kategori1->subcategories->where('brandID',$user->magaza->brandID)))
+                        @foreach($kategori1->subcategories->where('brandID',$user->magaza->brandID) as $subCat)
                             <p class="font-weight-bold text-primary">{{$subCat->desc}}</p>
                             <p class="text-muted">{{count($subCat->items)}} ürün</p>
                             <hr>
@@ -154,7 +154,7 @@
             <h5 class="">Ürün ekle</h5>
         </div>
         <div class="slimscroll">
-            <form enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/urnekle">
+            <form id="frmUrnEkle" enctype="multipart/form-data" class="ml-2 mr-2" method="post" action="/yoneticipaneli/urnekle">
                 @csrf
                 <fieldset>
                     <input type="hidden" name="catID" value="{{$kategori1->id}}">
@@ -282,7 +282,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="/yoneticipaneli/subcatadd">
+                    <form id="frmAltKatEkle" method="post" action="/yoneticipaneli/subcatadd">
                         @csrf
                         <fieldset>
                             <input type="hidden" name="catID" value="{{strtolower(transliterator_transliterate('Any-Latin; Latin-ASCII',str_replace(' ', '', $kategori1->desc)))}}">
@@ -326,6 +326,25 @@
     <script>
         $(document).ready(function () {
             $.fn.dataTable.moment( 'DD/MM/YYYY HH:mm' );
+        });
+    </script>
+    <script type="text/javascript">
+        $('#frmUrnEkle').submit(function(e){
+            $('body').removeClass('right-bar-enabled')
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
+        });
+        $('#frmAltKatEkle').submit(function(e){
+            swal.fire({
+                html:"<div class='spinner-border text-primary' role='status'> <span class='sr-only'>Lütfen bekleyin</span> </div>",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass:"swal2-toast"
+            });
         });
     </script>
     <script>

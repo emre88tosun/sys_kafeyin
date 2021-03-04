@@ -128,7 +128,7 @@ function ($) {
                         $(this).addClass("active");
                         $(this).parent().addClass("mm-active"); // add active to li of the current link
                         $(this).parent().parent().addClass("mm-show");
-                        $(this).parent().parent().prev().addClass("active"); // add active class to an anchor
+                        $(this).parent().parent().prev().addClass("mm-active"); // add active class to an anchor
                         $(this).parent().parent().parent().addClass("mm-active");
                         $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
                         $(this).parent().parent().parent().parent().parent().addClass("mm-active");
