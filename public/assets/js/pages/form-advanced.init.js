@@ -93,14 +93,6 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-/*
-Template Name: Shreyu - Responsive Bootstrap 4 Admin Dashboard
-Author: CoderThemes
-Version: 1.0.0
-Website: https://coderthemes.com/
-Contact: support@coderthemes.com
-File: Form Advanced init js
-*/
 !function ($) {
   "use strict";
 
@@ -175,25 +167,7 @@ File: Form Advanced init js
       dateFormat: "H:i",
       defaultDate: "01:45"
     });
-  }, //initializing Color Picker
-  Components.prototype.initColorpicker = function () {
-    // Color Picker
-    $('#basic-colorpicker').colorpicker();
-    $('#hexa-colorpicker').colorpicker({
-      format: 'auto'
-    });
-    $('#component-colorpicker').colorpicker({
-      format: null
-    });
-    $('#horizontal-colorpicker').colorpicker({
-      horizontal: true
-    });
-    $('#inline-colorpicker').colorpicker({
-      color: '#DD0F20',
-      inline: true,
-      container: true
-    });
-  }, // touchspin
+  },  // touchspin
   Components.prototype.initTouchspin = function () {
     var defaultOptions = {}; // touchspin
 

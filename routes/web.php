@@ -236,6 +236,8 @@ Route::prefix('yoneticipaneli')->middleware(['auth','store','verified'])->group(
     Route::post('/destektalebigonder',[StoreUserController::class,'destektalebigonder']);
     Route::post('/answerseen',[StoreUserController::class,'answerseen']);
 
+    Route::get('/qrkodlar',[StoreUserController::class,'qrkodlar'])->middleware('has.magaza');
+
     Route::get('/deneme',function (){
         return "okey";
     })->middleware('throttle');

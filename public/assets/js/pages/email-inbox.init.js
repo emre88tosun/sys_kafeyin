@@ -93,14 +93,6 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-/*
-Template Name: Shreyu - Responsive Bootstrap 4 Admin Dashboard
-Author: CoderThemes
-Version: 1.0.0
-Website: https://coderthemes.com/
-Contact: support@coderthemes.com
-File: email Innbox init js
-*/
 $(document).ready(function () {
   $(".chat-close").click(function (e) {
     e.preventDefault();

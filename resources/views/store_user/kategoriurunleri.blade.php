@@ -263,8 +263,8 @@
                         </div>
                     </div>
 
-                    <div class="offset-md-0">
-                        <input type="submit" class="btn btn-primary ml-3 mb-5" value="Ekle">
+                    <div class="col-md-12">
+                        <input type="submit" class="btn btn-primary mb-5" value="Ekle">
                     </div>
                 </fieldset>
             </form>
@@ -384,13 +384,13 @@
         @elseif(session('qrSent'))
             swal.fire({
                 title: 'Başarılı!',
-                text: "Ürününüz için oluşturulan QR kodlar, kayıtlı e-posta adresinizie gönderildi.",
+                text: "Ürününüz için oluşturulan QR kodlar, kayıtlı e-posta adresinize gönderildi.",
                 type: "success",
             });
         @elseif(session('multiQrSent'))
             swal.fire({
                 title: 'Başarılı!',
-                text: "Seçtiğiniz ürünler için oluşturulan QR kodlar, kayıtlı e-posta adresinizie gönderildi.",
+                text: "Seçtiğiniz ürünler için oluşturulan QR kodlar, kayıtlı e-posta adresinize gönderildi.",
                 type: "success",
             });
         @elseif(session('subCatAdd'))

@@ -30,13 +30,51 @@
     @if(count($tickets))
         @foreach($tickets->chunk(2) as $twoticket)
             <div class="card-deck">
-                @foreach($twoticket as $ticket)
-                    <div class="card col-xl-6 mb-3">
-                        <div class="card-body p-2 mt-2 mb-2">
-                            <div class="align-items-center d-flex ">
+                @if(count($twoticket) == 1)
+                    @foreach($twoticket as $ticket)
+                        <div class="card mb-3 ">
+                            <div class="card-body p-2 mt-2 mb-2">
+                                <div class="align-items-center d-flex ">
+                                    <div class="col-xl-12">
+                                        <div class="row justify-content-between">
+                                            <div class="col-xl-10">
+                                                <p class="font-weight-bold m-0 text-justify">{{$ticket->topic}}</p>
+                                            </div>
+                                            <div class="col-xl-auto">
+                                                @if($ticket->isAnswered)
+                                                    @if($ticket->isAnswerSeen)
+                                                        <span class="badge badge-success" id="badge{{$ticket->id}}">Cevaplandı</span>
+                                                    @else
+                                                        <span class="badge badge-success2" id="badge{{$ticket->id}}">Cevaplandı</span>
+                                                    @endif
+                                                @else
+                                                    <span class="badge badge-primary">Cevap bekleniyor</span>
+                                                @endif
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12">
+                                    <small class="m-0">Oluşturulma tarihi: {{\Carbon\Carbon::createFromTimeString($ticket->created_at)->format('d/m/Y H:i')}}</small>
+                                </div>
+                                <div class="col-xl-12">
+                                    <div class="row justify-content-between m-0 align-items-center">
+                                        <p class="font-weight-bold text-primary m-0">ID: DSTK{{97880000 + $ticket->id}}</p>
+                                        <a href="javascript:void(0);" id="btnDSTK{{97880000 + $ticket->id}}" type="button" class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#talepDetayDSTK{{97880000 + $ticket->id}}">Detay</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3 bg-transparent shadow-none"></div>
+                    @endforeach
+                @else
+                    @foreach($twoticket as $ticket)
+                        <div class="card mb-3">
+                            <div class="card-body w-100 p-1 mt-2 mb-2">
                                 <div class="col-xl-12">
                                     <div class="row justify-content-between">
-                                        <div class="col-xl-9">
+                                        <div class="col-xl-10">
                                             <p class="font-weight-bold m-0 text-justify">{{$ticket->topic}}</p>
                                         </div>
                                         <div class="col-xl-auto">
@@ -53,25 +91,30 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12">
-                                <small class="m-0">Oluşturulma tarihi: {{\Carbon\Carbon::createFromTimeString($ticket->created_at)->format('d/m/Y H:i')}}</small>
-                            </div>
-                            <div class="col-xl-12">
-                                <div class="row justify-content-between m-0 align-items-center">
-                                    <p class="font-weight-bold text-primary m-0">ID: DSTK{{97880000 + $ticket->id}}</p>
-                                    <a href="javascript:void(0);" id="btnDSTK{{97880000 + $ticket->id}}" type="button" class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#talepDetayDSTK{{97880000 + $ticket->id}}">Detay</a>
+                                <div class="col-xl-12">
+                                    <small class="m-0">Oluşturulma tarihi: {{\Carbon\Carbon::createFromTimeString($ticket->created_at)->format('d/m/Y H:i')}}</small>
+                                </div>
+                                <div class="col-xl-12">
+                                    <div class="row justify-content-between m-0 align-items-center">
+                                        <p class="font-weight-bold text-primary m-0">ID: DSTK{{97880000 + $ticket->id}}</p>
+                                        <a href="javascript:void(0);" id="btnDSTK{{97880000 + $ticket->id}}" type="button" class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#talepDetayDSTK{{97880000 + $ticket->id}}">Detay</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                @endif
             </div>
         @endforeach
     @else
         <div class="row">
             <div class="col-xl-12">
-                Destek talebiniz bulunmamaktadır.
+                <div class="col-xl-12">
+                    <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                        <i class="uil uil-ticket font-size-56 "></i>
+                        <p class="font-weight-bold">Destek talebiniz bulunmamaktadır.</p>
+                    </div>
+                </div>
             </div>
         </div>
     @endif

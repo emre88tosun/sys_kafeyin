@@ -1070,6 +1070,34 @@ class StoreUserController extends Controller
         ]);
     }
 
+    public function qrkodlar()
+    {
+        $aUser = Auth::user();
+        $user = User::where('id', $aUser->id)->with('brand')->with('magaza')->with('magaza.brand')->first();
+        $hasBrand = false;
+        $hasMagaza = false;
+        if ($user->brand) {
+            $hasBrand = true;
+        }
+        if ($user->magaza) {
+            $hasMagaza = true;
+        }
+
+        $categories = MenuItemCategory::where('canGenerateQrCode',true)
+            ->with('items',function ($query) use ($user){
+                return $query->where('storeID',$user->magaza->id)->whereHas('qrcodes');
+            })
+            ->get();
+
+
+        return view('store_user.qrkodlar')->with([
+            'user' => $user,
+            'hasBrand' => $hasBrand,
+            'hasMagaza' => $hasMagaza,
+            'categories' => $categories,
+        ]);
+    }
+
     public function etksil(Request $request)
     {
         $id = $request->id;
@@ -1830,18 +1858,26 @@ class StoreUserController extends Controller
                 'urn' => "Mağazanıza ait olmayan bir ürün için QR kod oluşturamazsınız."
             ]);
         }
+        if(KafeyinQrCode::where('storeID',$user->magaza->id)->where('menuItemID',$id)->where('status','active')->count() > 299){
+            return redirect()->back()->withErrors([
+                'urn' => "QR kod oluşturmak istediğiniz ürüne ait yeterince aktif QR kod bulunmaktadır."
+            ]);
+        }
         if (Storage::disk('public')->exists('qrs/' . $urn->id)) {
             Storage::disk('public')->delete('qrs/' . $urn->id);
         } else {
             Storage::disk('public')->makeDirectory('qrs/' . $urn->id);
         }
 
+        $randomStr = strtoupper(Str::random(6));
+        $batch = "KFYN".$user->magaza->id."-URN".$id."-".Carbon::now()->format("dmY/Hi")."-".$randomStr;
+
         for ($i = 0; $i < 150; $i++) {
             $random = Str::random(24);
             $string = "qr88-URN" . $urn->id . "-" . $random;
             $qr = QrCode::format('svg')
                 ->size(100)
-                ->backgroundColor(255, 144, 0)
+                ->backgroundColor(230, 230, 230)
                 ->margin(2)
                 ->style("round", 0.4)
                 ->generate($string, "../storage/app/public/qrs/" . $urn->id . "/" . $string . ".svg");
@@ -1850,6 +1886,7 @@ class StoreUserController extends Controller
                 'storeID' => $user->magaza->id,
                 'menuItemID' => $id,
                 'code' => $string,
+                'batch' => $batch,
                 'qrImageLink' => $svgLink,
                 'status' => 'will_print'
             ];
@@ -1859,6 +1896,7 @@ class StoreUserController extends Controller
         $data88 = [
             'prQrs' => $prQrs,
             'urun' => $urn,
+            'batch' => $batch,
             'store' => $user->magaza
         ];
         $pdf = PDF::loadView('store_user.qr_pdf', $data88)
@@ -1940,6 +1978,11 @@ class StoreUserController extends Controller
                         'urn' => "URN" . $uurn->id . " ID'li ürün mağazanıza ait olmadığı için QR kod oluşturamazsınız."]
                 );
             }
+            if(KafeyinQrCode::where('storeID',$user->magaza->id)->where('menuItemID',$uurn->id)->where('status','active')->count() > 299){
+                return redirect()->back()->withErrors([
+                    'urn' => "URN" . $uurn->id ." ID'li ürün için yeterince aktif QR kod bulunmaktadır."
+                ]);
+            }
         }
         foreach ($finalIDS as $idd) {
             $urn = MenuItem::where('id', $idd)->first();
@@ -1949,12 +1992,15 @@ class StoreUserController extends Controller
                 Storage::disk('public')->makeDirectory('qrs/' . $urn->id);
             }
 
+            $randomStr = strtoupper(Str::random(6));
+            $batch = "KFYN".$user->magaza->id."-URN".$idd."-".Carbon::now()->format("dmY/Hi")."-".$randomStr;
+
             for ($i = 0; $i < 150; $i++) {
                 $random = Str::random(24);
                 $string = "qr88-URN" . $urn->id . "-" . $random;
                 $qr = QrCode::format('svg')
                     ->size(100)
-                    ->backgroundColor(255, 144, 0)
+                    ->backgroundColor(230, 230, 230)
                     ->margin(2)
                     ->style("round", 0.4)
                     ->generate($string, "../storage/app/public/qrs/" . $urn->id . "/" . $string . ".svg");
@@ -1963,6 +2009,7 @@ class StoreUserController extends Controller
                     'storeID' => $user->magaza->id,
                     'menuItemID' => $idd,
                     'code' => $string,
+                    'batch' => $batch,
                     'qrImageLink' => $svgLink,
                     'status' => 'will_print'
                 ];
@@ -1972,6 +2019,7 @@ class StoreUserController extends Controller
             $data88 = [
                 'prQrs' => $prQrs,
                 'urun' => $urn,
+                'batch' => $batch,
                 'store' => $user->magaza
             ];
             $pdf = PDF::loadView('store_user.qr_pdf', $data88)
@@ -2041,7 +2089,7 @@ class StoreUserController extends Controller
             'desc' => $request->subCatName
         ];
         MenuItemSubCategory::create($data);
-        $this->writeBrandLog($user->magaza->id, $user->id, $request->subCatName . ", " . $catName . " kategorisine alt kategori olarak eklendi.", json_encode(['ip' => $request->ip()]));
+        $this->writeBrandLog($user->brand->id, $user->id, $request->subCatName . ", " . $catName . " kategorisine alt kategori olarak eklendi.", json_encode(['ip' => $request->ip()]));
         return redirect()->back()->with([
             'subCatAdd' => true
         ]);
@@ -3074,6 +3122,7 @@ class StoreUserController extends Controller
         $mquItems = MenuItem::where('storeId', $sto->id)->whereHas('u_qrcodes')->withCount('u_qrcodes')->orderByDesc('u_qrcodes_count')->limit(5)->get();
         $announces = Announcement::where('brandID', $sto->brand->id)->where('isActive', true)->with('city')->get();
 
+
         return view('store_user.magazadetay')->with([
             'user' => $user,
             'hasBrand' => $hasBrand,
@@ -3089,7 +3138,6 @@ class StoreUserController extends Controller
             'viewsByCity' => $viewsByCity,
             'favsByCity' => $favsByCity,
             'cities' => $cities,
-            'kafeyinNews' => $kafeyinNews,
             'isPremiumPlanEnabled' => $isPremiumPlanEnabled,
             'isStatisticsFree' => $isStatisticsFree,
             'survey' => $survey,
@@ -3278,11 +3326,12 @@ class StoreUserController extends Controller
                 ]);
                 break;
             case "urunler":
-                $kategoris = MenuItemCategory::with(['subcategories' => function ($query) use ($store) {
-                    return $query->where('brandID', $store->brand->id);
-                }])
-                    ->with(['subcategories.items' => function ($query) use ($store) {
+                $kategoris = MenuItemCategory::
+                    with(['subcategories.items' => function ($query) use ($store) {
                         return $query->where('storeID', $store->id);
+                    }])
+                    ->with(['subcategories' => function ($query) use ($store) {
+                        return $query->where('brandID', $store->brand->id);
                     }])
                     ->get();
                 $uruns = MenuItem::where('storeID', $store->id)
@@ -3541,11 +3590,12 @@ class StoreUserController extends Controller
                 ]);
                 break;
             case "urunler":
-                $kategoris = MenuItemCategory::with(['subcategories' => function ($query) use ($store) {
-                    return $query->where('brandID', $store->brand->id);
-                }])
-                    ->with(['subcategories.items' => function ($query) use ($store) {
+                $kategoris = MenuItemCategory::
+                    with(['subcategories.items' => function ($query) use ($store) {
                         return $query->where('storeID', $store->id);
+                    }])
+                    ->with(['subcategories' => function ($query) use ($store) {
+                        return $query->where('brandID', $store->brand->id);
                     }])
                     ->get();
                 $uruns = MenuItem::where('storeID', $store->id)
@@ -3675,6 +3725,7 @@ class StoreUserController extends Controller
         ];
 
         MenuItemSubCategory::create($data);
+        $this->writeBrandLog($user->brand->id, $user->id, $request->subCatName . ", " . $cat->desc . " kategorisine alt kategori olarak eklendi.", json_encode(['ip' => $request->ip()]));
         return redirect()->back()->with([
             'subCatAdd' => true,
             'catName' => $cat->desc,

@@ -21,7 +21,7 @@
                 @yield('content')
             </div>
         </div>
-        <button onclick="topFunction()" id="myBtn" class="shadow-sm" title="Yukarı"><i data-feather="chevrons-up" class="mb-1"></i></button>
+        <button onclick="topFunction()" id="myBtn" class="shadow-sm" title="Yukarı"><i data-feather="chevrons-up" class="mb-2"></i></button>
 
         <div class="modal fade" id="notificationsDialog" tabindex="-1" role="dialog"
              aria-labelledby="notificationsDialog" aria-hidden="true">
@@ -154,23 +154,18 @@
         });
     });
 
-    mybutton = document.getElementById("myBtn");
-
-    window.onscroll = function () {
-        scrollFunction()
-    };
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 488 || document.documentElement.scrollTop > 488) {
-            mybutton.style.display = "block";
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 50) {
+            $('#myBtn').fadeIn();
         } else {
-            mybutton.style.display = "none";
+            $('#myBtn').fadeOut();
         }
-    }
+    });
 
     function topFunction() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
+        $('body,html').animate({
+            scrollTop: 0
+        }, 600);
     }
 </script>
 </body>

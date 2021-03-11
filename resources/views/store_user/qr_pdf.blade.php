@@ -14,7 +14,7 @@
     <div class="body ml-5">
         <div class="card alert-light">
             <div class="card-title align-items-center">
-                <p class="mb-3 mt-5 align-self-center"><text class="font-weight-bold text-primary">{{$urun->title}} (Ürün ID: URN{{$urun->id}})</text>   <text class="text-muted font-weight-bold">{{$store->name}} (Mağaza ID: KFYN{{$store->id}}) / İşlem Tarihi ve Saati: {{\Carbon\Carbon::now()->format('d/m/Y H:i')}}</text></p>
+                <p class="mb-3 mt-5 align-self-center"><text class="font-weight-bold text-primary">{{$urun->title}} (Ürün ID: URN{{$urun->id}})</text>   <text class="text-muted font-weight-bold">{{$store->name}} (Mağaza ID: KFYN{{$store->id}}) / İşlem Tarihi ve Saati: {{\Carbon\Carbon::now()->format('d/m/Y H:i')}} / Parti: {{$batch}}</text></p>
             </div>
         </div>
         @foreach($prQrs as $qr)

@@ -9,6 +9,7 @@ class KafeyinQrCode extends Model
     protected $fillable = [
         'storeID',
         'menuItemID',
+        'batch',
         'code',
         'qrImageLink',
         'status',

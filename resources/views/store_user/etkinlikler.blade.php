@@ -257,11 +257,11 @@
                         <div class="form-group">
                             <label for="image" class="col-md-12 col-form-label">Görsel</label>
                             <div class="col-md-12">
-                                <input type="file" id="image" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="square landscape portrait" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
+                                <input type="file" id="image" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="square" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                             </div>
                         </div>
-                        <div class="offset-md-0">
-                            <input type="submit" class="btn btn-primary ml-3 mb-5" value="Ekle">
+                        <div class="col-md-12">
+                            <input type="submit" class="btn btn-primary mb-5" value="Ekle">
                         </div>
                     </fieldset>
                 </form>

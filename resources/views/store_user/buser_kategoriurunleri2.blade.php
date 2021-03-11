@@ -101,8 +101,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title font-size-16 mb-4">Alt kategoriler</h5>
-                    @if(count($kategori1->subcategories))
-                        @foreach($kategori1->subcategories as $subCat)
+                    @if(count($kategori1->subcategories->where('brandID',$user->brand->id)))
+                        @foreach($kategori1->subcategories->where('brandID',$user->brand->id) as $subCat)
                             <p class="font-weight-bold text-primary">{{$subCat->desc}}</p>
                             <p class="text-muted">{{count($subCat->items)}} ürün</p>
                             <hr>

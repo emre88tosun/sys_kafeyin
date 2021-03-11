@@ -95,14 +95,6 @@
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-/*
-Template Name: Shreyu - Responsive Bootstrap 4 Admin Dashboard
-Author: CoderThemes
-Version: 1.0.0
-Website: https://coderthemes.com/
-Contact: support@coderthemes.com
-File: Apex Charts
-*/
 Apex = {
   chart: {
     parentHeightOffset: 0,

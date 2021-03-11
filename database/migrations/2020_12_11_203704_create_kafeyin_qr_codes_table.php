@@ -17,6 +17,7 @@ class CreateKafeyinQrCodesTable extends Migration
             $table->id();
             $table->unsignedInteger('storeID');
             $table->unsignedInteger('menuItemID');
+            $table->text('batch');
             $table->text('code')->unique();
             $table->string('qrImageLink');
             $table->string('status');

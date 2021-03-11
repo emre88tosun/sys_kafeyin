@@ -14,6 +14,7 @@ class Store extends Model
         'brandID',
         'isCafe',
         'isActive',
+        'isPartner',
         'tag',
         'featured',
         'name',
@@ -58,6 +59,7 @@ class Store extends Model
         'canTakeLocalDeliveryOrder',
         'canTakeLocalCargoOrder',
         'canTakeUpstateCargoOrder',
+        'detail',
     ];
 
     public function comments()
@@ -78,7 +80,7 @@ class Store extends Model
 
     public function gunOrtalamaPuan($datetime)
     {
-        $coms = StoreComment::where('storeID',$this->id)->where('created_at','>',Carbon::now()->subMonth())->get();
+        $coms = StoreComment::where('storeID',$this->id)->get();
         $coms2 = $coms->where('created_at','<=',$datetime->toDateTimeString());
         if(count($coms2) == 0){
             return 0;

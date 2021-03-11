@@ -93,14 +93,6 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-/*
-Template Name: Shreyu - Responsive Bootstrap 4 Admin Dashboard
-Author: CoderThemes
-Version: 1.0.0
-Website: https://coderthemes.com/
-Contact: support@coderthemes.com
-File: Dashboard init js
-*/
 !function ($) {
   "use strict";
 
@@ -227,16 +219,6 @@ File: Dashboard init js
         }
       }
     };
-    new ApexCharts(document.querySelector("#today-revenue-chart"), options2).render();
-    new ApexCharts(document.querySelector("#today-product-sold-chart"), $.extend({}, options2, {
-      colors: ['#f77e53']
-    })).render();
-    new ApexCharts(document.querySelector("#today-new-customer-chart"), $.extend({}, options2, {
-      colors: ['#43d39e']
-    })).render();
-    new ApexCharts(document.querySelector("#today-new-visitors-chart"), $.extend({}, options2, {
-      colors: ['#ffbe0b']
-    })).render(); // ------------------- revenue chart
 
     function getDaysInMonth(month, year) {
       var date = new Date(year, month, 1);
@@ -310,9 +292,7 @@ File: Dashboard init js
         }
       }
     };
-    var chart = new ApexCharts(document.querySelector("#revenue-chart"), options);
-    chart.render();
-    /* ------------- target */
+
 
     var options = {
       chart: {

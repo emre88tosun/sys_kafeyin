@@ -20,6 +20,7 @@ class CreateStoresTable extends Migration
             $table->unsignedInteger('brandID');
             $table->boolean('isCafe');
             $table->boolean('isActive')->default(true);
+            $table->boolean('isPartner')->default(false);
             $table->string('tag')->nullable();
             $table->string('featured')->nullable();
             $table->string('name');
@@ -64,6 +65,7 @@ class CreateStoresTable extends Migration
             $table->boolean('canTakeLocalDeliveryOrder')->default(false);
             $table->boolean('canTakeLocalCargoOrder')->default(false);
             $table->boolean('canTakeUpstateCargoOrder')->default(false);
+            $table->text('detail')->nullable();
             $table->timestamps();
         });
     }

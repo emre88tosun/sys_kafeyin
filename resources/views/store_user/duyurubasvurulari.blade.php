@@ -243,8 +243,8 @@
                                         <input type="file" id="lImage2" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="landscape" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                                     </div>
                                 </div>
-                                <div class="offset-md-0">
-                                    <input type="submit" class="btn btn-primary ml-3 mb-5" value="Gönder">
+                                <div class="col-xl-12">
+                                    <input type="submit" class="btn btn-primary mb-5" value="Gönder">
                                 </div>
                             </fieldset>
                         </form>
@@ -281,8 +281,8 @@
                                     <input type="file" id="lImage2" name="image" data-max-file-size="1M" required data-show-loader="true" data-allowed-formats="landscape" data-allowed-file-extensions="png jpg jpeg" class="dropify"/>
                                 </div>
                             </div>
-                            <div class="offset-md-0">
-                                <input type="submit" class="btn btn-primary ml-3 mb-5" value="Gönder">
+                            <div class="col-xl-12">
+                                <input type="submit" class="btn btn-primary mb-5" value="Gönder">
                             </div>
                         </fieldset>
                     </form>

@@ -111,13 +111,18 @@
                                 @endif
                                 </h5>
                             @if(count($ccoms) == 0)
-                                <p class="text-center text-danger mt-3 font-weight-bold">
-                                    @if(count($user->brand->stores) > 1)
-                                        Henüz mağazalaranıza yorum eklenmedi.
-                                    @else
-                                        Henüz mağazanıza yorum eklenmedi.
-                                    @endif
-                                    </p>
+                                @if(count($user->brand->stores) > 1)
+                                    <div class="col-12 text-center  pt-5" style="height: 23vh">
+                                        <i class="uil uil-comment-slash font-size-56 "></i>
+                                        <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazalarınıza yorum eklemedi.</p>
+                                    </div>
+                                @else
+                                    <div class="col-12 text-center  pt-5" style="height: 23vh">
+                                        <i class="uil uil-comment-slash font-size-56 "></i>
+                                        <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanıza yorum eklemedi.</p>
+                                    </div>
+                                @endif
+
                             @else
                                 <div class="slimscroll ml-3 mt-3 mb-3 mr-1" style="max-height: 500px;">
                                     @foreach($ccoms->chunk(2) as $ccoms2)
@@ -219,21 +224,43 @@
                             @endif
                         </div>
                         <div @if($isPremiumPlanEnabled && !$isStatisticsFree && !$user->brand->isPremium)  class="col-xl-6" @else  class="col-xl-5" @endif >
-                            <h5 class="card-title header-title border-bottom p-3 mb-0">Görüntülenmelerin şehirlere göre
+                            <h5 class="card-title header-title border-bottom p-3 mb-0">Görüntülemelerin şehirlere göre
                                 dağılımı <span class="text-muted font-size-14 font-weight-normal">(Tüm zamanlar)</span>
                             </h5>
                             @if($isPremiumPlanEnabled)
                                 @if($isStatisticsFree)
-                                    <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                    @if(count($viewsByCity) == 0)
+                                        <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                            <i class="uil uil-eye-slash font-size-56 "></i>
+                                            <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazayı görüntülemedi.</p>
+                                        </div>
+                                    @else
+                                        <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                    @endif
+
                                 @else
                                     @if($user->brand->isPremium)
-                                        <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                        @if(count($viewsByCity) == 0)
+                                            <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                <i class="uil uil-eye-slash font-size-56 "></i>
+                                                <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazayı görüntülemedi.</p>
+                                            </div>
+                                        @else
+                                            <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                        @endif
                                     @else
                                         <div class="alert alert-primary ml-4 mr-4 mt-3">Markanızı Premium Plan'a taşıyarak markanızın detaylı istatistiklerine ulaşabilirsiniz.</div>
                                     @endif
                                 @endif
                             @else
-                                <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                @if(count($viewsByCity) == 0)
+                                    <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                        <i class="uil uil-eye-slash font-size-56 "></i>
+                                        <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazayı görüntülemedi.</p>
+                                    </div>
+                                @else
+                                    <div id="views_via_cities_chart" class="apex-charts mb-0 mt-4" dir="ltr"></div>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -247,13 +274,17 @@
                             @if($isPremiumPlanEnabled)
                                 @if($isStatisticsFree)
                                     @if($fsc == 0)
-                                        <p class="m-0 text-center mr-2 font-weight-bold text-danger">
-                                            @if(count($user->brand->stores) > 1)
-                                                Henüz mağazalarınızı favoriye ekleyen kullanıcı bulunmamaktadır.
-                                            @else
-                                                Henüz mağazanızı favoriye ekleyen kullanıcı bulunmamaktadır.
-                                            @endif
-                                        </p>
+                                        @if(count($user->brand->stores) > 1)
+                                            <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                <i class="uil uil-folder-slash font-size-56 "></i>
+                                                <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazaları favorilerine eklemedi.</p>
+                                            </div>
+                                        @else
+                                            <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                <i class="uil uil-folder-slash font-size-56 "></i>
+                                                <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazayı favorilerine eklemedi.</p>
+                                            </div>
+                                        @endif
                                     @else
                                         @foreach($favsByCity as $cityFav)
                                             @if($cityFav['count'] != 0)
@@ -271,13 +302,17 @@
                                 @else
                                     @if($user->brand->isPremium)
                                         @if($fsc == 0)
-                                            <p class="m-0 text-center mr-2 font-weight-bold text-danger">
-                                                @if(count($user->brand->stores) > 1)
-                                                    Henüz mağazalarınızı favoriye ekleyen kullanıcı bulunmamaktadır.
-                                                @else
-                                                    Henüz mağazanızı favoriye ekleyen kullanıcı bulunmamaktadır.
-                                                @endif
-                                            </p>
+                                            @if(count($user->brand->stores) > 1)
+                                                <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                    <i class="uil uil-folder-slash font-size-56 "></i>
+                                                    <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazaları favorilerine eklemedi.</p>
+                                                </div>
+                                            @else
+                                                <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                                    <i class="uil uil-folder-slash font-size-56 "></i>
+                                                    <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazayı favorilerine eklemedi.</p>
+                                                </div>
+                                            @endif
                                         @else
                                             @foreach($favsByCity as $cityFav)
                                                 @if($cityFav['count'] != 0)
@@ -298,13 +333,17 @@
                                 @endif
                             @else
                                 @if($fsc == 0)
-                                    <p class="m-0 text-center mr-2 font-weight-bold text-danger">
-                                        @if(count($user->brand->stores) > 1)
-                                            Henüz mağazalarınızı favoriye ekleyen kullanıcı bulunmamaktadır.
-                                        @else
-                                            Henüz mağazanızı favoriye ekleyen kullanıcı bulunmamaktadır.
-                                        @endif
-                                    </p>
+                                    @if(count($user->brand->stores) > 1)
+                                        <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                            <i class="uil uil-folder-slash font-size-56 "></i>
+                                            <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazaları favorilerine eklemedi.</p>
+                                        </div>
+                                    @else
+                                        <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
+                                            <i class="uil uil-folder-slash font-size-56 "></i>
+                                            <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazayı favorilerine eklemedi.</p>
+                                        </div>
+                                    @endif
                                 @else
                                     @foreach($favsByCity as $cityFav)
                                         @if($cityFav['count'] != 0)
@@ -583,7 +622,7 @@
                             @if(count($lastFiveStoreComments) == 0)
                                 <div class="col-12 text-center mt-5 pt-5" style="height: 23vh">
                                     <i class="uil uil-comment-slash font-size-56 "></i>
-                                    <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanıza yorum eklenmedi.</p>
+                                    <p class="font-weight-bold">Henüz hiçbir kullanıcı mağazanıza yorum eklemedi.</p>
                                 </div>
                             @else
                                 <div class="slimscroll ml-3 mt-3 mb-3 mr-1" style="max-height: 320px;">
@@ -1394,25 +1433,27 @@
             @endforeach
         @endif
     @endif
-    <div class="modal fade" id="approvalInfoDialog" tabindex="-1" role="dialog"
-         aria-labelledby="approvalInfoDialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="approvalInfoDialog">Bilgi</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-xl-12">
-                        <p>Mağazanızın bağlı olduğu marka için oluşturulan ve tamamlanan sadakat kartlarını,
-                            Kafeyin kullanıcılarının isteği üzerine oluşturulan referans kodları ile onaylayabilir ve ödüllerini verebilirsiniz. </p>
+    @if($hasMagaza)
+        <div class="modal fade" id="approvalInfoDialog" tabindex="-1" role="dialog"
+             aria-labelledby="approvalInfoDialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="approvalInfoDialog">Bilgi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-xl-12">
+                            <p>Mağazanızın bağlı olduğu marka için oluşturulan ve tamamlanan sadakat kartlarını,
+                                Kafeyin kullanıcılarının isteği üzerine oluşturulan referans kodları ile onaylayabilir ve ödüllerini verebilirsiniz. </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
     @if(count($announces) > 0)
         @foreach($announces as $item)
             <div class="modal fade" id="duyuruModal{{$item->id}}" tabindex="-1" role="dialog"
@@ -2122,7 +2163,6 @@
 @endsection
 
 @section('script-bottom')
-    <script src="{{ URL::asset('assets/js/pages/dashboard.init.js') }}"></script>
     <script src="{{ URL::asset('assets/js/pages/dropify.js') }}"></script>
     <script src="{{ URL::asset('assets/js/pages/inputmask.js') }}"></script>
 @endsection

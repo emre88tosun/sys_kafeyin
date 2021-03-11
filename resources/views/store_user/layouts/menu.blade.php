@@ -101,6 +101,12 @@
                 <span> Ürünler </span>
             </a>
         </li>
+            <li>
+                <a href="/yoneticipaneli/qrkodlar">
+                    <i data-feather="database"></i>
+                    <span> QR Kodlar </span>
+                </a>
+            </li>
     @endif
     @if(!$hasMagaza && $hasBrand)
         <li>
